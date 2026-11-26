@@ -1,0 +1,292 @@
+
+:root {
+  color-scheme: dark;
+  --bg: #07110d;
+  --panel: #0b1912;
+  --line: #244331;
+  --green: #70e69a;
+  --muted: #8ca996;
+  --bright: #c7f7d5;
+  --red: #ff7777;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(ellipse at top, #10291b 0, #07110d 55%);
+  color: var(--bright);
+  font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  min-height: 100vh;
+  padding: 24px 14px;
+}
+
+.shell {
+  width: min(680px, 100%);
+  margin: 0 auto;
+  border: 1px solid var(--line);
+  background: rgba(5, 15, 10, .94);
+  box-shadow: 0 18px 70px #0008;
+  padding: 22px;
+}
+
+header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 16px;
+}
+
+.brand {
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #e4ffec;
+}
+
+.brand span {
+  color: var(--green);
+}
+
+.version {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-align: right;
+}
+
+.status-panel {
+  margin: 18px 0;
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  background: #08150e;
+}
+
+.status-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.status-line i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #789080;
+  box-shadow: 0 0 9px currentColor;
+}
+
+.status-line i.busy {
+  background: var(--green);
+  color: var(--green);
+}
+
+.status-line i.error {
+  background: var(--red);
+  color: var(--red);
+}
+
+.substatus {
+  font-size: 10px;
+  color: var(--muted);
+  margin: 5px 0 0 19px;
+  letter-spacing: 1px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 18px;
+}
+
+.tab {
+  background: transparent;
+  color: var(--muted);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 11px 17px;
+  font: inherit;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.tab.active {
+  color: var(--green);
+  border-bottom-color: var(--green);
+}
+
+.panel {
+  padding: 4px 0 12px;
+}
+
+.panel h1 {
+  font-size: 17px;
+  letter-spacing: 1px;
+  margin: 0 0 7px;
+  color: #e5ffed;
+}
+
+.hint,
+.note {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.hint {
+  margin: 0 0 18px;
+}
+
+.note {
+  margin: 17px 0 0;
+  border-left: 2px solid var(--line);
+  padding-left: 10px;
+}
+
+.file-picker {
+  display: inline-block;
+  border: 1px dashed #4b805e;
+  color: var(--green);
+  padding: 11px 15px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+input[type=file] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.file-info {
+  margin: 13px 0;
+  padding: 11px;
+  background: #08150e;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+  min-height: 42px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 13px 0;
+}
+
+button {
+  font: inherit;
+  letter-spacing: 1px;
+  padding: 11px 14px;
+  border: 1px solid #477b58;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.primary {
+  background: #174b2b;
+  color: #d8ffe3;
+  border-color: #5cae75;
+}
+
+.secondary {
+  background: #0b1b12;
+  color: #a9d8b7;
+}
+
+.progress-wrap {
+  height: 7px;
+  background: #14251a;
+  border: 1px solid #294633;
+  margin-top: 18px;
+}
+
+.progress-wrap div {
+  height: 100%;
+  width: 0;
+  background: var(--green);
+  transition: width .12s;
+}
+
+.progress-label {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  margin-top: 7px;
+}
+
+.received-result {
+  border: 1px solid var(--line);
+  padding: 14px;
+  margin-top: 16px;
+  overflow-wrap: anywhere;
+}
+
+.received-result p {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.download-link {
+  display: inline-block;
+  color: var(--green);
+  margin: 7px 0;
+}
+
+.received-result img {
+  display: block;
+  max-width: 100%;
+  max-height: 360px;
+  object-fit: contain;
+  margin-top: 12px;
+  border: 1px solid var(--line);
+}
+
+footer {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 18px;
+  color: #688574;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+@media(max-width:520px) {
+  body {
+    padding: 10px 8px;
+  }
+
+  .shell {
+    padding: 16px 13px;
+  }
+
+  .brand {
+    font-size: 23px;
+  }
+
+  .version {
+    font-size: 8px;
+  }
+
+  .actions button {
+    flex: 1 1 100%;
+  }
+
+  .tab {
+    flex: 1;
+  }
+}
