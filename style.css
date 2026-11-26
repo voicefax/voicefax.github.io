@@ -1,0 +1,170 @@
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #07110d;
+  color: #d9f5e3;
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+.app {
+  width: min(100% - 28px, 560px);
+  margin: 0 auto;
+  padding: 30px 0 24px;
+}
+
+header { margin-bottom: 24px; }
+.brand {
+  font-size: 29px;
+  font-weight: 800;
+  letter-spacing: 5px;
+}
+.version {
+  color: #6f9b7e;
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin-top: 6px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: #0d1d14;
+  border: 1px solid #1c3b29;
+  padding: 12px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  margin-bottom: 18px;
+}
+
+.light {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #65db8b;
+  box-shadow: 0 0 9px #65db8b;
+}
+
+nav {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 15px;
+}
+
+button {
+  border: 1px solid #315440;
+  background: #102219;
+  color: #c9e7d2;
+  padding: 14px 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 9px;
+  border-radius: 3px;
+}
+
+button:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+button.primary, .tab.active {
+  background: #b5e7c3;
+  color: #07110d;
+  border-color: #b5e7c3;
+}
+
+.tab { margin: 0; }
+
+.panel {
+  background: #0b1911;
+  border: 1px solid #1c3b29;
+  padding: 20px;
+}
+
+.panel[hidden] { display: none !important; }
+
+h2 {
+  font-size: 15px;
+  letter-spacing: 2px;
+  margin: 0 0 12px;
+}
+
+h3 {
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+p, .info {
+  color: #8eae99;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+input[type=file] {
+  width: 100%;
+  margin: 12px 0;
+  color: #a9cbb5;
+  font-size: 12px;
+}
+
+.meter {
+  height: 7px;
+  background: #17291e;
+  margin-top: 15px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.meter div {
+  height: 100%;
+  width: 0%;
+  background: #7dd99a;
+  transition: width .08s linear;
+}
+
+.signal {
+  border: 1px solid #1c3b29;
+  padding: 13px;
+  margin: 15px 0;
+}
+
+.signal-label {
+  color: #78a486;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.download {
+  display: block;
+  color: #b5e7c3;
+  margin: 16px 0;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+#imagePreview {
+  display: block;
+  max-width: 100%;
+  max-height: 280px;
+  margin-top: 15px;
+  border: 1px solid #315440;
+}
+
+footer {
+  color: #53715d;
+  text-align: center;
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 22px 0;
+}
+
+@media (max-width: 420px) {
+  .app { width: calc(100% - 20px); padding-top: 22px; }
+  .panel { padding: 15px; }
+  .brand { font-size: 25px; }
+}
