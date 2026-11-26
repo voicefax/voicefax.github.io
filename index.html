@@ -1,0 +1,115 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#07110d">
+  <title>VoiceFax Audio 1.1</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <div class="brand">VOICE<span>FAX</span></div>
+        <div class="version">AUDIO MODEM · VERSION 1.1</div>
+      </div>
+      <div class="edition">EXPERIMENTAL</div>
+    </header>
+
+    <section class="status-panel">
+      <div class="status-line">
+        <i id="statusLight"></i>
+        <span id="mainStatus">STANDBY</span>
+      </div>
+      <div class="substatus" id="connectionStatus">NO CONNECTION</div>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab active" id="sendTab" type="button">TRANSMIT</button>
+      <button class="tab" id="receiveTab" type="button">RECEIVE</button>
+      <button class="tab" id="testTab" type="button">SELF-TEST</button>
+    </nav>
+
+    <section id="sendPanel" class="panel">
+      <h1>Transmit document</h1>
+      <p class="hint">Select a document to encode into audible modem data.</p>
+
+      <label class="file-picker" for="fileInput">SELECT FILE</label>
+      <input id="fileInput" type="file">
+
+      <div class="file-info" id="fileInformation">No file selected.</div>
+
+      <div class="actions">
+        <button id="prepareButton" class="secondary" disabled>PREPARE</button>
+        <button id="playButton" class="primary" disabled>PLAY FAX AUDIO</button>
+      </div>
+
+      <div class="progress-wrap"><div id="progressBar"></div></div>
+      <div class="progress-label" id="progressText">WAITING FOR FILE</div>
+
+      <div class="actions">
+        <button id="downloadAudioButton" class="secondary" disabled>DOWNLOAD AUDIO WAV</button>
+      </div>
+
+      <p class="note">
+        Play the audio near the receiving device's microphone.
+        Keep the devices close and avoid background noise.
+      </p>
+    </section>
+
+    <section id="receivePanel" class="panel" hidden>
+      <h1>Receive document</h1>
+      <p class="hint">
+        Start recording before playing the sender's audio.
+      </p>
+
+      <div class="actions">
+        <button id="recordButton" class="primary">START RECORDING</button>
+        <button id="stopRecordButton" class="secondary" disabled>STOP & DECODE</button>
+      </div>
+
+      <div class="file-info" id="recordInformation">Microphone is idle.</div>
+
+      <div class="progress-wrap"><div id="receiveProgress"></div></div>
+      <div class="progress-label" id="receiveStatus">RECEIVER STANDBY</div>
+
+      <div class="diagnostics">
+        <div>Signal level: <strong id="signalLevel">--</strong></div>
+        <div>Detected bits: <strong id="detectedBits">--</strong></div>
+      </div>
+
+      <div id="receivedResult" class="received-result" hidden>
+        <strong id="receivedName"></strong>
+        <p id="receivedDetails"></p>
+        <a id="downloadLink" class="download-link" href="#" download>SAVE RECEIVED FILE</a>
+        <img id="imagePreview" alt="Received image preview" hidden>
+      </div>
+
+      <p class="note">
+        Microphone permission is required. Use HTTPS.
+        Some phone calls and networks distort modem audio.
+      </p>
+    </section>
+
+    <section id="testPanel" class="panel" hidden>
+      <h1>Internal modem test</h1>
+      <p class="hint">
+        This tests file encoding and decoding internally without
+        using the speaker or microphone.
+      </p>
+      <button id="selfTestButton" class="primary">RUN SELF-TEST</button>
+      <div class="file-info" id="testInformation">Waiting for test.</div>
+      <div class="progress-wrap"><div id="testProgress"></div></div>
+      <div class="progress-label" id="testStatus">TEST NOT STARTED</div>
+    </section>
+
+    <footer>
+      VOICEFAX AUDIO 1.1 · EXPERIMENTAL AUDIO DATA TRANSMISSION
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
