@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07100d">
+  <title>VoiceFax</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <main class="terminal">
+
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">VF</div>
+        <div>
+          <h1>VoiceFax</h1>
+          <p>DOCUMENT TRANSMISSION SYSTEM</p>
+        </div>
+      </div>
+
+      <div class="system-status">
+        <span id="statusLight" class="status-light"></span>
+        <span id="mainStatus">STANDBY</span>
+      </div>
+    </header>
+
+    <section class="connection-panel">
+      <div class="panel-heading">CONNECTION</div>
+
+      <div class="connection-display">
+        <div>
+          <span class="small-label">SYSTEM</span>
+          <strong>LOCAL FAX MODE</strong>
+        </div>
+
+        <div>
+          <span class="small-label">CONNECTION</span>
+          <strong id="connectionStatus">NOT CONNECTED</strong>
+        </div>
+
+        <div>
+          <span class="small-label">TRANSFER MODE</span>
+          <strong>HIGH SPEED</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">01 / OUTGOING DOCUMENT</div>
+
+      <label class="file-picker" for="fileInput">
+        <span class="upload-icon">＋</span>
+        <strong>Select document</strong>
+        <span>PDF · JPG · PNG · WEBP · GIF · TXT</span>
+      </label>
+
+      <input
+        type="file"
+        id="fileInput"
+        accept=".txt,.pdf,.jpg,.jpeg,.png,.webp,.gif"
+      >
+
+      <div id="fileInformation" class="file-information">
+        No document selected.
+      </div>
+
+      <div class="button-row">
+        <button id="prepareButton" class="secondary-button" disabled>
+          PREPARE
+        </button>
+
+        <button id="transmitButton" class="primary-button" disabled>
+          SEND FAX
+        </button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">02 / TRANSMISSION</div>
+
+      <div class="transmission-display">
+        <div id="transmissionState" class="transmission-state">
+          READY TO TRANSMIT
+        </div>
+
+        <div class="progress-track">
+          <div id="progressBar" class="progress-fill"></div>
+        </div>
+
+        <div class="progress-details">
+          <span id="progressText">0%</span>
+          <span id="transferSpeed">0 KB/S</span>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button id="pauseButton" class="secondary-button" disabled>
+          PAUSE
+        </button>
+
+        <button id="stopButton" class="stop-button" disabled>
+          STOP
+        </button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">03 / INCOMING DOCUMENT</div>
+
+      <div class="incoming-display">
+        <div class="incoming-icon">⇩</div>
+        <strong id="receiveStatus">RECEIVER STANDBY</strong>
+        <p id="receiveInformation">
+          Incoming documents will appear here after transmission.
+        </p>
+      </div>
+
+      <a id="downloadLink" class="download-button" hidden>
+        SAVE RECEIVED DOCUMENT
+      </a>
+
+      <div id="imagePreview" class="image-preview" hidden>
+        <img id="receivedImage" alt="Received document preview">
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">04 / FAX AUDIO</div>
+
+      <div class="audio-description">
+        <strong>FAX MODEM SOUND</strong>
+        <p>
+          Traditional fax-inspired connection and transmission sounds.
+        </p>
+      </div>
+
+      <label class="sound-toggle">
+        <input type="checkbox" id="soundEnabled" checked>
+        <span>Enable fax sounds</span>
+      </label>
+
+      <label class="sound-toggle">
+        <input type="checkbox" id="soundOnCompletion" checked>
+        <span>Play completion tone</span>
+      </label>
+    </section>
+
+    <footer class="footer">
+      <span>VOICEFAX SYSTEM</span>
+      <span>VERSION 3.1</span>
+      <span>LOCAL TRANSMISSION</span>
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
