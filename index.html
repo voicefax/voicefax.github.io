@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#eeeeee">
+
+    <title>VoiceFax | Document Transmission</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main class="machine">
+
+        <header class="header">
+            <div class="brand">VOICEFAX</div>
+            <div class="subtitle">TELEPHONE DOCUMENT TRANSMISSION SYSTEM</div>
+        </header>
+
+        <section class="display">
+            <div class="display-top">
+                SYSTEM STATUS
+                <span id="connectionStatus">STANDBY</span>
+            </div>
+
+            <div id="mainStatus" class="main-status">
+                READY
+            </div>
+
+            <div id="statusMessage" class="status-message">
+                Awaiting document input.
+            </div>
+        </section>
+
+        <section class="document-section">
+
+            <h2>DOCUMENT INPUT</h2>
+
+            <label for="fileInput" class="file-button">
+                SELECT DOCUMENT
+            </label>
+
+            <input
+                type="file"
+                id="fileInput"
+                accept=".txt,.pdf"
+            >
+
+            <div id="fileName" class="file-name">
+                NO DOCUMENT SELECTED
+            </div>
+
+            <textarea
+                id="documentText"
+                placeholder="Document contents will appear here..."
+            ></textarea>
+
+        </section>
+
+        <section class="voice-section">
+
+            <h2>TRANSMISSION SETTINGS</h2>
+
+            <label for="voiceSelect">VOICE SELECTION</label>
+            <select id="voiceSelect">
+                <option value="">Loading voices...</option>
+            </select>
+
+            <label for="speedSelect">SPEECH SPEED</label>
+            <select id="speedSelect">
+                <option value="0.8">SLOW</option>
+                <option value="1" selected>NORMAL</option>
+                <option value="1.2">FAST</option>
+            </select>
+
+        </section>
+
+        <section class="controls">
+
+            <button id="transmitButton">
+                START TRANSMISSION
+            </button>
+
+            <button id="pauseButton">
+                PAUSE
+            </button>
+
+            <button id="stopButton">
+                STOP TRANSMISSION
+            </button>
+
+        </section>
+
+        <footer>
+            VOICEFAX SYSTEMS<br>
+            DIGITAL DOCUMENT TRANSMISSION<br>
+            VERSION 1.0
+        </footer>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
