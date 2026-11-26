@@ -1,0 +1,278 @@
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --background: #07100d;
+  --panel: #0b1712;
+  --border: #1c3829;
+  --green: #70f5a1;
+  --dim: #779783;
+  --text: #d6eadb;
+  --red: #ff6565;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--text);
+  font-family: "Courier New", monospace;
+  padding: 24px 16px;
+}
+
+.terminal {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+header {
+  padding: 20px 0 26px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  font-size: 32px;
+  font-weight: bold;
+  letter-spacing: 5px;
+  color: var(--green);
+}
+
+.version {
+  margin-top: 9px;
+  color: var(--dim);
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.connection-panel {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  margin: 22px 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+
+.status-light {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 12px var(--green);
+}
+
+.status-light.active {
+  animation: pulse 1s infinite;
+}
+
+.status-light.error {
+  background: var(--red);
+  box-shadow: 0 0 12px var(--red);
+}
+
+.panel-label {
+  font-size: 10px;
+  color: var(--dim);
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
+#mainStatus {
+  font-size: 13px;
+  color: var(--green);
+}
+
+.connection-state {
+  margin-left: auto;
+  color: var(--dim);
+  font-size: 10px;
+  text-align: right;
+}
+
+.section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+h2 {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--green);
+  margin: 0 0 22px;
+  font-weight: normal;
+}
+
+.file-picker {
+  display: block;
+  padding: 16px;
+  border: 1px dashed var(--green);
+  color: var(--green);
+  text-align: center;
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.file-picker input {
+  display: none;
+}
+
+.file-information {
+  color: var(--dim);
+  font-size: 11px;
+  padding: 13px 0;
+  overflow-wrap: anywhere;
+  line-height: 1.7;
+}
+
+.settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.settings label {
+  color: var(--dim);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+select {
+  display: block;
+  width: 100%;
+  margin-top: 9px;
+  padding: 12px 8px;
+  background: #07100d;
+  color: var(--green);
+  border: 1px solid var(--border);
+  font-family: inherit;
+  font-size: 12px;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  margin: 6px 0;
+  background: #10251a;
+  border: 1px solid var(--green);
+  color: var(--green);
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover:not(:disabled) {
+  background: #193d29;
+}
+
+button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 5px;
+  background: #15251b;
+  margin-top: 20px;
+}
+
+#progressBar {
+  width: 0%;
+  height: 100%;
+  background: var(--green);
+  transition: width 0.15s linear;
+}
+
+.progress-label {
+  margin-top: 9px;
+  color: var(--dim);
+  text-align: right;
+  font-size: 10px;
+}
+
+.description {
+  color: var(--dim);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+#downloadLink {
+  display: block;
+  padding: 15px;
+  margin-top: 14px;
+  border: 1px solid var(--green);
+  color: var(--green);
+  text-decoration: none;
+  font-size: 11px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.image-preview {
+  margin-top: 18px;
+  border: 1px solid var(--border);
+  padding: 10px;
+}
+
+.image-preview img {
+  display: block;
+  max-width: 100%;
+  max-height: 350px;
+  margin: auto;
+}
+
+footer {
+  padding: 22px 0;
+  text-align: center;
+  color: var(--dim);
+  font-size: 9px;
+  line-height: 2;
+  letter-spacing: 1px;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 12px var(--green);
+  }
+
+  50% {
+    opacity: 0.4;
+    box-shadow: 0 0 3px var(--green);
+  }
+}
+
+@media (max-width: 420px) {
+  body {
+    padding: 12px;
+  }
+
+  .section {
+    padding: 17px;
+  }
+
+  .brand {
+    font-size: 27px;
+  }
+
+  .settings {
+    grid-template-columns: 1fr;
+  }
+}
