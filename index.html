@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111827">
+<title>VoiceFax</title>
+<link rel="stylesheet" href="style.css">
+<script src="script.js" defer></script>
+</head>
+<body>
+<main class="app">
+<header><div class="logo">VF</div><div><h1>VoiceFax</h1><p>Acoustic file transfer</p></div></header>
+<nav><button type="button" class="tab active" data-tab="send">Send</button><button type="button" class="tab" data-tab="receive">Receive</button></nav>
+
+<section id="send" class="panel">
+<h2>Send a file</h2>
+<p class="hint">Choose a photo or PDF. Photos are compressed automatically; PDFs stay unchanged.</p>
+<label class="field-label" for="fileInput">Choose a photo or PDF</label>
+<input id="fileInput" type="file" accept="image/*,.pdf,application/pdf">
+<div id="fileInfo" class="fileinfo">No file selected yet.</div>
+<button type="button" id="prepareBtn" class="action" disabled>Prepare file</button>
+<div id="sendDetails" class="details"></div>
+<button type="button" id="transmitBtn" class="action primary" disabled>Transmit sound</button>
+<button type="button" id="stopSendBtn" class="action stop" disabled>Stop transmission</button>
+<div class="progress"><div id="sendProgress"></div></div>
+<p id="sendStatus" class="status" aria-live="polite">Choose a file to begin.</p>
+</section>
+
+<section id="receive" class="panel hidden">
+<h2>Receive a file</h2>
+<p class="hint">Start listening here, then transmit from the other device.</p>
+<button type="button" id="listenBtn" class="action primary">Start listening</button>
+<button type="button" id="stopListenBtn" class="action stop" disabled>Stop listening</button>
+<div class="progress"><div id="receiveProgress"></div></div>
+<p id="receiveStatus" class="status" aria-live="polite">Microphone has not been started.</p>
+<a id="downloadLink" class="download hidden" download>Download received file</a>
+</section>
+<footer>Keep the devices close together. Microphone permission is required to receive.</footer>
+</main>
+</body>
+</html>
