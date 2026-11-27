@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>VoiceFax Fast</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="app">
+    <header><div class="logo">VF</div><div><h1>VoiceFax</h1><p>Fast acoustic file transfer</p></div></header>
+    <nav><button class="tab active" data-tab="send">Send</button><button class="tab" data-tab="receive">Receive</button></nav>
+    <section id="send" class="panel">
+      <h2>Send a file</h2>
+      <p class="hint">Choose a photo or PDF from your device. Photos are compressed automatically; PDFs are sent unchanged.</p>
+      <input id="fileInput" type="file" accept="image/*,.pdf,application/pdf">
+      <label class="choose primary" for="fileInput">Choose photo or PDF</label>
+      <div id="fileInfo" class="fileinfo">No file selected</div>
+      <button id="prepareBtn" disabled>Prepare file</button>
+      <div id="sendDetails" class="details"></div>
+      <button id="transmitBtn" disabled>Transmit sound</button>
+      <button id="stopSendBtn" class="stop" disabled>Stop</button>
+      <div class="progress"><div id="sendProgress"></div></div>
+      <p id="sendStatus" class="status" aria-live="polite">Choose a file to begin.</p>
+    </section>
+    <section id="receive" class="panel hidden">
+      <h2>Receive a file</h2>
+      <p class="hint">Start listening first, then play the sound from the sending device near this device's microphone.</p>
+      <button id="listenBtn" class="primary">Start listening</button>
+      <button id="stopListenBtn" class="stop" disabled>Stop listening</button>
+      <div class="progress"><div id="receiveProgress"></div></div>
+      <p id="receiveStatus" class="status" aria-live="polite">Waiting for audio…</p>
+      <a id="downloadLink" class="download hidden" download>Download received file</a>
+    </section>
+    <footer>Experimental browser-to-browser audio transfer. Keep both devices close and use a quiet room.</footer>
+  </main>
+</body>
+</html>
