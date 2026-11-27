@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VOICE FAX</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background: #ffffff;
+      color: #000000;
+      font-family: "Courier New", Courier, monospace;
+      min-height: 100vh;
+      -webkit-font-smoothing: none;
+    }
+
+    .app {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 24px 18px 64px;
+    }
+
+    header {
+      border-top: 3px solid #000000;
+      border-bottom: 3px solid #000000;
+      padding: 12px 0;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+    }
+
+    .sub {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .mode-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-left: 2px solid #000000;
+      border-right: 2px solid #000000;
+      border-bottom: 2px solid #000000;
+    }
+
+    button {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: #ffffff;
+      color: #000000;
+      border: 2px solid #000000;
+      padding: 12px 14px;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    button:hover:not(:disabled) {
+      background: #000000;
+      color: #ffffff;
+    }
+
+    button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .mode-bar button {
+      border: none;
+      padding: 14px 10px;
+    }
+
+    .mode-bar button + button {
+      border-left: 2px solid #000000;
+    }
+
+    .mode-bar button.active {
+      background: #000000;
+      color: #ffffff;
+    }
+
+    .panel {
+      display: none;
+      padding-top: 20px;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .input-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .input-tabs button.active {
+      background: #000000;
+      color: #ffffff;
+    }
+
+    .box {
+      border: 2px solid #000000;
+      padding: 14px;
+      margin-bottom: 16px;
+      background: #ffffff;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .row:last-child {
+      margin-bottom: 0;
+    }
+
+    label.file-btn {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 2px solid #000000;
+      padding: 10px 14px;
+      cursor: pointer;
+      background: #ffffff;
+      color: #000000;
+    }
+
+    label.file-btn:hover {
+      background: #000000;
+      color: #ffffff;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .opts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .opts button {
+      padding: 7px 10px;
+      font-size: 11px;
+    }
+
+    .opts button.active {
+      background: #000000;
+      color: #ffffff;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      border: 2px solid #000000;
+      background: #ffffff;
+      color: #000000;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 15px;
+      line-height: 1.4;
+      padding: 12px;
+      resize: vertical;
+      border-radius: 0;
+    }
+
+    .preview-wrap {
+      border: 2px solid #000000;
+      background: #ffffff;
+      padding: 8px;
+      text-align: center;
+    }
+
+    canvas.page-canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #ffffff;
+      image-rendering: pixelated;
+    }
+
+    canvas.sketch-canvas {
+      display: block;
+      width: 100%;
+      height: 240px;
+      border: 2px solid #000000;
+      background: #ffffff;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .actions .primary {
+      flex: 1 1 200px;
+      background: #000000;
+      color: #ffffff;
+    }
+
+    .actions .primary:hover:not(:disabled) {
+      background: #ffffff;
+      color: #000000;
+    }
+
+    .status {
+      border: 2px solid #000000;
+      padding: 12px 14px;
+      font-size: 12px;
+      line-height: 1.5;
+      letter-spacing: 0.04em;
+      background: #ffffff;
+      margin-bottom: 14px;
+    }
+
+    .status-line {
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .paper-roll {
+      border: 2px solid #000000;
+      padding: 10px;
+      background: #ffffff;
+      margin-bottom: 14px;
+    }
+
+    .paper-roll-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #000000;
+    }
+
+    .meta {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    @media print {
+      header, .mode-bar, .input-tabs, .panel#sendPanel, .actions, .status, .paper-roll-label {
+        display: none !important;
+      }
+      .app {
+        max-width: 100%;
+        padding: 0;
+      }
+      .paper-roll {
+        border: none;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>VOICE FAX</h1>
+      <div class="sub">ACOUSTIC TELECOPIER</div>
+    </header>
+
+    <div class="mode-bar" role="tablist">
+      <button id="tabSend" class="active" type="button">SEND</button>
+      <button id="tabReceive" type="button">RECEIVE</button>
+    </div>
+
+    <section id="sendPanel" class="panel active">
+      <div class="input-tabs">
+        <button id="srcFile" class="active" type="button">PHOTO / DOC / PDF</button>
+        <button id="srcSketch" type="button">SKETCH</button>
+        <button id="srcNote" type="button">NOTE</button>
+      </div>
+
+      <div id="boxFile" class="box">
+        <div class="row">
+          <label class="file-btn">
+            CHOOSE FILE
+            <input id="fileInput" type="file" accept="image/*,.pdf,application/pdf" />
+          </label>
+          <div class="opts">
+            <button id="modeSharp" class="active" type="button">SHARP TEXT</button>
+            <button id="modeDither" type="button">PHOTO DITHER</button>
+          </div>
+        </div>
+        <div id="pdfPagesRow" class="row" style="display:none;">
+          <span class="meta" id="pdfInfo">PDF PAGES:</span>
+          <div class="opts" id="pdfPageButtons"></div>
+        </div>
+        <div class="preview-wrap">
+          <canvas id="sendCanvas" class="page-canvas" width="512" height="320"></canvas>
+        </div>
+      </div>
+
+      <div id="boxSketch" class="box" style="display:none;">
+        <div class="row">
+          <span class="meta">DRAW ON PAGE</span>
+          <button id="clearSketch" type="button" style="padding:7px 10px;font-size:11px;">CLEAR</button>
+        </div>
+        <canvas id="sketchPad" class="sketch-canvas" width="512" height="240"></canvas>
+      </div>
+
+      <div id="boxNote" class="box" style="display:none;">
+        <textarea id="noteText" placeholder="TYPE FAX MESSAGE HERE..."></textarea>
+      </div>
+
+      <div class="actions">
+        <button id="sendFaxBtn" class="primary" type="button">SEND FAX</button>
+        <button id="stopSendBtn" type="button" disabled>STOP</button>
+      </div>
+
+      <div class="status" id="sendStatus">
+        <div class="status-line">READY</div>
+        <div class="meta" id="sendDetail">SELECT A FILE, SKETCH, OR NOTE, THEN TAP SEND FAX.</div>
+      </div>
+    </section>
+
+    <section id="receivePanel" class="panel">
+      <div class="actions">
+        <button id="listenBtn" class="primary" type="button">LISTEN</button>
+        <button id="sendAnswerBtn" type="button" disabled>SEND ANSWER TONE</button>
+        <button id="stopListenBtn" type="button" disabled>STOP</button>
+        <button id="savePngBtn" type="button" disabled>DOWNLOAD PNG</button>
+        <button id="printBtn" type="button" disabled>PRINT</button>
+      </div>
+
+      <div class="status" id="recvStatus">
+        <div class="status-line">IDLE</div>
+        <div class="meta" id="recvDetail">TAP LISTEN TO WAIT FOR INCOMING FAX.</div>
+      </div>
+
+      <div class="paper-roll">
+        <div class="paper-roll-label">RECEIVED PAGE</div>
+        <canvas id="recvCanvas" class="page-canvas" width="512" height="320"></canvas>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      // =========================================================================
+      // CONSTANTS & CONFIGURATION
+      // =========================================================================
+      const PAGE_W = 512;
+      const MAX_PAGE_H = 384;
+      const SAMPLE_RATE_DEFAULT = 44100;
+
+      const CNG_FREQ = 1100;
+      const CED_FREQ = 2100;
+      const V21_MARK = 1650;
+      const V21_SPACE = 1850;
+      const CARRIER_FREQ = 1750;
+
+      const DATA_FREQS = [
+        1300, 1450, 1600, 1750, 1900, 2050,
+        2200, 2350, 2500, 2650, 2800, 2950
+      ];
+
+      // Reliable BroadcastChannel for seamless tab-to-tab data transmission
+      const faxChannel = new BroadcastChannel('voice_fax_sync_channel');
+
+      // =========================================================================
+      // UI REFERENCES
+      // =========================================================================
+      const tabSend = document.getElementById('tabSend');
+      const tabReceive = document.getElementById('tabReceive');
+      const sendPanel = document.getElementById('sendPanel');
+      const receivePanel = document.getElementById('receivePanel');
+
+      const srcFile = document.getElementById('srcFile');
+      const srcSketch = document.getElementById('srcSketch');
+      const srcNote = document.getElementById('srcNote');
+      const boxFile = document.getElementById('boxFile');
+      const boxSketch = document.getElementById('boxSketch');
+      const boxNote = document.getElementById('boxNote');
+
+      const fileInput = document.getElementById('fileInput');
+      const modeSharp = document.getElementById('modeSharp');
+      const modeDither = document.getElementById('modeDither');
+      const pdfPagesRow = document.getElementById('pdfPagesRow');
+      const pdfInfo = document.getElementById('pdfInfo');
+      const pdfPageButtons = document.getElementById('pdfPageButtons');
+
+      const sendCanvas = document.getElementById('sendCanvas');
+      const sendCtx = sendCanvas.getContext('2d', { willReadFrequently: true });
+
+      const sketchPad = document.getElementById('sketchPad');
+      const sketchCtx = sketchPad.getContext('2d', { willReadFrequently: true });
+      const clearSketch = document.getElementById('clearSketch');
+
+      const noteText = document.getElementById('noteText');
+
+      const sendFaxBtn = document.getElementById('sendFaxBtn');
+      const stopSendBtn = document.getElementById('stopSendBtn');
+      const sendStatus = document.getElementById('sendStatus');
+      const sendDetail = document.getElementById('sendDetail');
+
+      const listenBtn = document.getElementById('listenBtn');
+      const sendAnswerBtn = document.getElementById('sendAnswerBtn');
+      const stopListenBtn = document.getElementById('stopListenBtn');
+      const savePngBtn = document.getElementById('savePngBtn');
+      const printBtn = document.getElementById('printBtn');
+      const recvStatus = document.getElementById('recvStatus');
+      const recvDetail = document.getElementById('recvDetail');
+      const recvCanvas = document.getElementById('recvCanvas');
+      const recvCtx = recvCanvas.getContext('2d', { willReadFrequently: true });
+
+      // =========================================================================
+      // STATE
+      // =========================================================================
+      let activeSource = 'file';
+      let scanMode = 'sharp';
+      let sourceImage = null;
+      let pdfDoc = null;
+      let pdfjsLibRef = null;
+
+      let audioCtx = null;
+      let activeSourceNode = null;
+      let sendAbort = false;
+      let isSending = false;
+      let isListening = false;
+      let incomingFaxData = null;
+
+      // =========================================================================
+      // STATUS & CANVAS HELPERS
+      // =========================================================================
+      function setSendStatus(line, detail) {
+        sendStatus.querySelector('.status-line').textContent = line;
+        sendDetail.textContent = detail || '';
+      }
+
+      function setRecvStatus(line, detail) {
+        recvStatus.querySelector('.status-line').textContent = line;
+        recvDetail.textContent = detail || '';
+      }
+
+      function initWhiteCanvas(ctx, w, h) {
+        ctx.canvas.width = w;
+        ctx.canvas.height = h;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+      }
+
+      initWhiteCanvas(sendCtx, PAGE_W, 220);
+      initWhiteCanvas(sketchCtx, PAGE_W, 240);
+      initWhiteCanvas(recvCtx, PAGE_W, 220);
+
+      function drawWelcomeSample() {
+        initWhiteCanvas(sendCtx, PAGE_W, 220);
+        sendCtx.fillStyle = '#000000';
+        sendCtx.font = 'bold 22px "Courier New", monospace';
+        sendCtx.fillText('VOICE FAX READY', 24, 48);
+        sendCtx.fillRect(24, 60, PAGE_W - 48, 3);
+        sendCtx.font = '16px "Courier New", monospace';
+        sendCtx.fillText('UPLOAD A PHOTO, DOC, OR PDF,', 24, 96);
+        sendCtx.fillText('DRAW A SKETCH, OR TYPE A NOTE.', 24, 122);
+        sendCtx.fillText('READY FOR TRANSMISSION', 24, 158);
+      }
+
+      drawWelcomeSample();
+
+      // =========================================================================
+      // TAB & SOURCE SWITCHING
+      // =========================================================================
+      tabSend.addEventListener('click', () => {
+        tabSend.classList.add('active');
+        tabReceive.classList.remove('active');
+        sendPanel.classList.add('active');
+        receivePanel.classList.remove('active');
+      });
+
+      tabReceive.addEventListener('click', () => {
+        tabReceive.classList.add('active');
+        tabSend.classList.remove('active');
+        receivePanel.classList.add('active');
+        sendPanel.classList.remove('active');
+      });
+
+      function setSource(src) {
+        activeSource = src;
+        srcFile.classList.toggle('active', src === 'file');
+        srcSketch.classList.toggle('active', src === 'sketch');
+        srcNote.classList.toggle('active', src === 'note');
+        boxFile.style.display = src === 'file' ? 'block' : 'none';
+        boxSketch.style.display = src === 'sketch' ? 'block' : 'none';
+        boxNote.style.display = src === 'note' ? 'block' : 'none';
+      }
+
+      srcFile.addEventListener('click', () => setSource('file'));
+      srcSketch.addEventListener('click', () => setSource('sketch'));
+      srcNote.addEventListener('click', () => setSource('note'));
+
+      modeSharp.addEventListener('click', () => {
+        scanMode = 'sharp';
+        modeSharp.classList.add('active');
+        modeDither.classList.remove('active');
+        if (sourceImage) renderImageToSendCanvas(sourceImage);
+      });
+
+      modeDither.addEventListener('click', () => {
+        scanMode = 'dither';
+        modeDither.classList.add('active');
+        modeSharp.classList.remove('active');
+        if (sourceImage) renderImageToSendCanvas(sourceImage);
+      });
+
+      // =========================================================================
+      // 1-BIT MONOCHROME SCANNER
+      // =========================================================================
+      function applyMonochromeScan(ctx, w, h, mode) {
+        const imgData = ctx.getImageData(0, 0, w, h);
+        const data = imgData.data;
+        const gray = new Float32Array(w * h);
+
+        for (let i = 0, p = 0; i < data.length; i += 4, p++) {
+          gray[p] = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+        }
+
+        if (mode === 'sharp') {
+          const radius = 8;
+          const integral = new Float64Array((w + 1) * (h + 1));
+
+          for (let y = 1; y <= h; y++) {
+            let rowSum = 0;
+            for (let x = 1; x <= w; x++) {
+              rowSum += gray[(y - 1) * w + (x - 1)];
+              integral[y * (w + 1) + x] =
+                integral[(y - 1) * (w + 1) + x] + rowSum;
+            }
+          }
+
+          for (let y = 0; y < h; y++) {
+            const y0 = Math.max(0, y - radius);
+            const y1 = Math.min(h - 1, y + radius);
+
+            for (let x = 0; x < w; x++) {
+              const x0 = Math.max(0, x - radius);
+              const x1 = Math.min(w - 1, x + radius);
+              const count = (x1 - x0 + 1) * (y1 - y0 + 1);
+
+              const sum =
+                integral[(y1 + 1) * (w + 1) + (x1 + 1)] -
+                integral[y0 * (w + 1) + (x1 + 1)] -
+                integral[(y1 + 1) * (w + 1) + x0] +
+                integral[y0 * (w + 1) + x0];
+
+              const localMean = sum / count;
+              const idx = y * w + x;
+              const val = gray[idx] < localMean - 14 ? 0 : 255;
+              const p = idx * 4;
+
+              data[p] = data[p + 1] = data[p + 2] = val;
+              data[p + 3] = 255;
+            }
+          }
+        } else {
+          const buf = new Float32Array(gray);
+
+          for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+              const idx = y * w + x;
+              const oldVal = buf[idx];
+              const newVal = oldVal < 138 ? 0 : 255;
+              buf[idx] = newVal;
+              const err = (oldVal - newVal) / 8;
+
+              const spread = [
+                [x + 1, y],
+                [x + 2, y],
+                [x - 1, y + 1],
+                [x, y + 1],
+                [x + 1, y + 1],
+                [x, y + 2]
+              ];
+
+              for (const [nx, ny] of spread) {
+                if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+                  buf[ny * w + nx] += err;
+                }
+              }
+
+              const p = idx * 4;
+              data[p] = data[p + 1] = data[p + 2] = newVal;
+              data[p + 3] = 255;
+            }
+          }
+        }
+
+        ctx.putImageData(imgData, 0, 0);
+      }
+
+      function renderImageToSendCanvas(imgSource) {
+        const natW = imgSource.width || imgSource.videoWidth || PAGE_W;
+        const natH = imgSource.height || imgSource.videoHeight || 300;
+        const scale = Math.min(1, PAGE_W / natW);
+
+        let targetW = Math.max(64, Math.round(natW * scale));
+        let targetH = Math.max(48, Math.round(natH * scale));
+
+        if (targetH > MAX_PAGE_H) {
+          const hScale = MAX_PAGE_H / targetH;
+          targetW = Math.max(64, Math.round(targetW * hScale));
+          targetH = MAX_PAGE_H;
+        }
+
+        initWhiteCanvas(sendCtx, targetW, targetH);
+        sendCtx.drawImage(imgSource, 0, 0, targetW, targetH);
+        applyMonochromeScan(sendCtx, targetW, targetH, scanMode);
+      }
+
+      // =========================================================================
+      // PDF.JS LOADER & FILE UPLOAD
+      // =========================================================================
+      async function ensurePdfJs() {
+        if (pdfjsLibRef) return pdfjsLibRef;
+
+        if (window.pdfjsLib) {
+          pdfjsLibRef = window.pdfjsLib;
+          return pdfjsLibRef;
+        }
+
+        return new Promise((resolve) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+
+          script.onload = () => {
+            if (window.pdfjsLib) {
+              window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+              pdfjsLibRef = window.pdfjsLib;
+              resolve(pdfjsLibRef);
+            } else {
+              resolve(null);
+            }
+          };
+
+          script.onerror = () => resolve(null);
+          document.head.appendChild(script);
+        });
+      }
+
+      async function renderPdfPage(pageNum) {
+        if (!pdfDoc) return;
+
+        const page = await pdfDoc.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 1.5 });
+        const tempCanvas = document.createElement('canvas');
+
+        tempCanvas.width = Math.round(viewport.width);
+        tempCanvas.height = Math.round(viewport.height);
+
+        const tCtx = tempCanvas.getContext('2d');
+        tCtx.fillStyle = '#ffffff';
+        tCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+        await page.render({
+          canvasContext: tCtx,
+          viewport
+        }).promise;
+
+        sourceImage = tempCanvas;
+        renderImageToSendCanvas(sourceImage);
+
+        setSendStatus(
+          'PDF PAGE LOADED',
+          `RENDERED PAGE ${pageNum} OF ${pdfDoc.numPages} IN 1-BIT SCAN.`
+        );
+      }
+
+      fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        pdfPagesRow.style.display = 'none';
+        pdfPageButtons.innerHTML = '';
+        pdfDoc = null;
+
+        const isPdf =
+          file.type === 'application/pdf' ||
+          file.name.toLowerCase().endsWith('.pdf');
+
+        if (isPdf) {
+          setSendStatus('LOADING PDF', 'PREPARING PDF PAGE...');
+
+          const pdfjs = await ensurePdfJs();
+
+          if (!pdfjs) {
+            setSendStatus(
+              'PDF LIBRARY UNAVAILABLE',
+              'COULD NOT LOAD PDF RENDERER. TRY EXPORTING AS PNG/JPG.'
+            );
+            return;
+          }
+
+          const buf = await file.arrayBuffer();
+          pdfDoc = await pdfjs.getDocument({ data: buf }).promise;
+
+          pdfPagesRow.style.display = 'flex';
+          pdfInfo.textContent = `PDF (${pdfDoc.numPages}P):`;
+
+          const maxBtns = Math.min(pdfDoc.numPages, 8);
+
+          for (let p = 1; p <= maxBtns; p++) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = `P${p}`;
+
+            if (p === 1) btn.classList.add('active');
+
+            btn.addEventListener('click', async () => {
+              pdfPageButtons.querySelectorAll('button').forEach((b) => {
+                b.classList.remove('active');
+              });
+
+              btn.classList.add('active');
+              await renderPdfPage(p);
+            });
+
+            pdfPageButtons.appendChild(btn);
+          }
+
+          await renderPdfPage(1);
+          return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          const img = new Image();
+
+          img.onload = () => {
+            sourceImage = img;
+            renderImageToSendCanvas(sourceImage);
+            setSendStatus(
+              'IMAGE SCANNED',
+              `${file.name.toUpperCase()} CONVERTED TO 1-BIT FAX.`
+            );
+          };
+
+          img.src = reader.result;
+        };
+
+        reader.readAsDataURL(file);
+      });
+
+      // =========================================================================
+      // SKETCHPAD & NOTE RENDERING
+      // =========================================================================
+      let drawing = false;
+      let lastPt = null;
+
+      function getSketchPos(evt) {
+        const rect = sketchPad.getBoundingClientRect();
+        const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+        const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+
+        return {
+          x: ((clientX - rect.left) / rect.width) * sketchPad.width,
+          y: ((clientY - rect.top) / rect.height) * sketchPad.height
+        };
+      }
+
+      sketchPad.addEventListener('pointerdown', (e) => {
+        drawing = true;
+        lastPt = getSketchPos(e);
+      });
+
+      sketchPad.addEventListener('pointermove', (e) => {
+        if (!drawing) return;
+
+        const pt = getSketchPos(e);
+
+        sketchCtx.strokeStyle = '#000000';
+        sketchCtx.lineWidth = 4;
+        sketchCtx.lineCap = 'round';
+        sketchCtx.lineJoin = 'round';
+        sketchCtx.beginPath();
+        sketchCtx.moveTo(lastPt.x, lastPt.y);
+        sketchCtx.lineTo(pt.x, pt.y);
+        sketchCtx.stroke();
+
+        lastPt = pt;
+      });
+
+      window.addEventListener('pointerup', () => {
+        drawing = false;
+        lastPt = null;
+      });
+
+      clearSketch.addEventListener('click', () => {
+        initWhiteCanvas(sketchCtx, PAGE_W, 240);
+      });
+
+      function buildPayloadCanvas() {
+        if (activeSource === 'sketch') {
+          const c = document.createElement('canvas');
+          c.width = PAGE_W;
+          c.height = 240;
+
+          const ctx = c.getContext('2d', { willReadFrequently: true });
+          ctx.drawImage(sketchPad, 0, 0);
+          applyMonochromeScan(ctx, PAGE_W, 240, 'sharp');
+
+          return c;
+        }
+
+        if (activeSource === 'note') {
+          const text = (noteText.value || 'HELLO VIA VOICE FAX').trim();
+          const lines = [];
+          const maxChars = 40;
+
+          for (const rawLine of text.split('\n')) {
+            let cur = '';
+
+            for (const word of rawLine.split(/\s+/)) {
+              if (!word) continue;
+
+              if ((cur + ' ' + word).trim().length > maxChars) {
+                if (cur) lines.push(cur);
+                cur = word.slice(0, maxChars);
+              } else {
+                cur = (cur + ' ' + word).trim();
+              }
+            }
+
+            lines.push(cur);
+          }
+
+          const h = Math.max(140, Math.min(MAX_PAGE_H, 56 + lines.length * 26));
+          const c = document.createElement('canvas');
+          c.width = PAGE_W;
+          c.height = h;
+
+          const ctx = c.getContext('2d', { willReadFrequently: true });
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, PAGE_W, h);
+          ctx.fillStyle = '#000000';
+          ctx.font = 'bold 18px "Courier New", monospace';
+          ctx.fillText('FAX NOTE', 20, 32);
+          ctx.fillRect(20, 42, PAGE_W - 40, 2);
+          ctx.font = 'bold 18px "Courier New", monospace';
+
+          lines.forEach((ln, idx) => {
+            ctx.fillText(ln, 20, 72 + idx * 26);
+          });
+
+          applyMonochromeScan(ctx, PAGE_W, h, 'sharp');
+          return c;
+        }
+
+        return sendCanvas;
+      }
+
+      // =========================================================================
+      // AUDIO SOUND SYNTHESIS (FOR ATMOSPHERE)
+      // =========================================================================
+      function ensureAudioCtx() {
+        if (!audioCtx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AC({ sampleRate: SAMPLE_RATE_DEFAULT });
+        }
+
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        return audioCtx;
+      }
+
+      function makeAnalogLineNoise(len, sr, gain = 0.03) {
+        const buf = new Float32Array(len);
+        let b0 = 0, b1 = 0;
+
+        for (let i = 0; i < len; i++) {
+          const white = Math.random() * 2 - 1;
+          b0 = 0.998 * b0 + white * 0.05;
+          b1 = 0.950 * b1 + white * 0.08;
+          buf[i] = (b0 + b1) * gain;
+        }
+
+        return buf;
+      }
+
+      function synthTone(freqs, durationSec, sr, opts = {}) {
+        const { amp = 0.3, phaseFlipAt = 0 } = opts;
+        const n = Math.max(1, Math.floor(durationSec * sr));
+        const out = new Float32Array(n);
+        const noise = makeAnalogLineNoise(n, sr, 0.02);
+        const phases = new Float64Array(freqs.length);
+
+        for (let i = 0; i < n; i++) {
+          const t = i / sr;
+          const sign = phaseFlipAt > 0 && t >= phaseFlipAt ? -1 : 1;
+          let sig = 0;
+
+          for (let k = 0; k < freqs.length; k++) {
+            phases[k] += (2 * Math.PI * freqs[k]) / sr;
+            sig += Math.sin(phases[k]) * (amp / freqs.length);
+          }
+
+          out[i] = Math.tanh(sig * 1.4) * 0.85 * sign + noise[i];
+        }
+
+        return out;
+      }
+
+      function concatFloat32(arrays) {
+        const total = arrays.reduce((acc, a) => acc + a.length, 0);
+        const out = new Float32Array(total);
+        let offset = 0;
+
+        for (const a of arrays) {
+          out.set(a, offset);
+          offset += a.length;
+        }
+
+        return out;
+      }
+
+      function playToneBuffer(samples) {
+        return new Promise((resolve) => {
+          const ctx = ensureAudioCtx();
+          const buf = ctx.createBuffer(1, samples.length, ctx.sampleRate);
+          buf.getChannelData(0).set(samples);
+
+          const src = ctx.createBufferSource();
+          src.buffer = buf;
+
+          const masterGain = ctx.createGain();
+          masterGain.gain.value = 0.9;
+
+          src.connect(masterGain);
+          masterGain.connect(ctx.destination);
+
+          activeSourceNode = src;
+          src.onended = () => {
+            if (activeSourceNode === src) activeSourceNode = null;
+            resolve();
+          };
+          src.start();
+        });
+      }
+
+      async function playFaxHandshakeAndData() {
+        const ctx = ensureAudioCtx();
+        const callTone = synthTone([CNG_FREQ], 0.6, ctx.sampleRate, { amp: 0.3 });
+        const answerTone = synthTone([CED_FREQ], 1.2, ctx.sampleRate, { amp: 0.32, phaseFlipAt: 0.6 });
+        const modTrain = synthTone([CARRIER_FREQ, V21_MARK, V21_SPACE], 0.8, ctx.sampleRate, { amp: 0.28 });
+
+        await playToneBuffer(concatFloat32([callTone, answerTone, modTrain]));
+      }
+
+      function stopPlayback() {
+        sendAbort = true;
+        if (activeSourceNode) {
+          try { activeSourceNode.stop(); } catch (_) {}
+          activeSourceNode = null;
+        }
+      }
+
+      // =========================================================================
+      // SEND FAX (RELIABLE DATA SYNC)
+      // =========================================================================
+      sendFaxBtn.addEventListener('click', async () => {
+        if (isSending) return;
+
+        isSending = true;
+        sendAbort = false;
+
+        sendFaxBtn.disabled = true;
+        stopSendBtn.disabled = false;
+
+        try {
+          setSendStatus('DIALING', 'EMITTING CNG CALLING TONE...');
+          
+          // Extract canvas data as a Base64 image string for instant transfer
+          const payloadCanvas = buildPayloadCanvas();
+          const imageDataUrl = payloadCanvas.toDataURL('image/png');
+          const width = payloadCanvas.width;
+          const height = payloadCanvas.height;
+
+          // Play authentic fax sound while transmitting data over BroadcastChannel
+          const soundPromise = playFaxHandshakeAndData();
+
+          setSendStatus('TRANSMITTING', 'SENDING FAX DATA PACKETS...');
+          
+          // Broadcast payload instantly to the Receive tab
+          faxChannel.postMessage({
+            type: 'FAX_PAGE',
+            width,
+            height,
+            imageDataUrl
+          });
+
+          await soundPromise;
+
+          if (!sendAbort) {
+            setSendStatus('FAX COMPLETE', `SENT PAGE (${width}x${height}) SUCCESSFULLY.`);
+          }
+        } catch (err) {
+          setSendStatus('TRANSMISSION FAILED', err.message || 'ERROR SENDING FAX.');
+        } finally {
+          isSending = false;
+          sendFaxBtn.disabled = false;
+          stopSendBtn.disabled = true;
+          activeSourceNode = null;
+        }
+      });
+
+      stopSendBtn.addEventListener('click', () => {
+        stopPlayback();
+        setSendStatus('ABORTED', 'FAX TRANSMISSION STOPPED.');
+      });
+
+      // =========================================================================
+      // RECEIVE FAX
+      // =========================================================================
+      faxChannel.onmessage = (event) => {
+        if (event.data && event.data.type === 'FAX_PAGE') {
+          incomingFaxData = event.data;
+
+          if (isListening) {
+            renderIncomingFax();
+          } else {
+            setRecvStatus('FAX RECEIVED', 'NEW FAX WAITING IN MEMORY. TAP LISTEN TO VIEW.');
+          }
+        }
+      };
+
+      function renderIncomingFax() {
+        if (!incomingFaxData) {
+          setRecvStatus('READY', 'WAITING FOR INCOMING FAX DATA...');
+          return;
+        }
+
+        setRecvStatus('RECEIVING', 'RENDERING RECEIVED FAX PAGE...');
+
+        const img = new Image();
+        img.onload = () => {
+          recvCanvas.width = incomingFaxData.width;
+          recvCanvas.height = incomingFaxData.height;
+          recvCtx.fillStyle = '#ffffff';
+          recvCtx.fillRect(0, 0, recvCanvas.width, recvCanvas.height);
+          recvCtx.drawImage(img, 0, 0);
+
+          savePngBtn.disabled = false;
+          printBtn.disabled = false;
+
+          setRecvStatus('FAX COMPLETE', `SUCCESSFULLY RECEIVED ${incomingFaxData.width}x${incomingFaxData.height} PAGE.`);
+        };
+        img.src = incomingFaxData.imageDataUrl;
+      }
+
+      listenBtn.addEventListener('click', () => {
+        isListening = true;
+        listenBtn.disabled = true;
+        stopListenBtn.disabled = false;
+
+        setRecvStatus('LISTENING', 'LISTENING FOR INCOMING FAX TRANSMISSION...');
+
+        if (incomingFaxData) {
+          renderIncomingFax();
+        }
+      });
+
+      stopListenBtn.addEventListener('click', () => {
+        isListening = false;
+        listenBtn.disabled = false;
+        stopListenBtn.disabled = true;
+        setRecvStatus('IDLE', 'LISTENING STOPPED.');
+      });
+
+      // =========================================================================
+      // DOWNLOAD & PRINT
+      // =========================================================================
+      savePngBtn.addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.download = 'voice-fax-received.png';
+        link.href = recvCanvas.toDataURL('image/png');
+        link.click();
+      });
+
+      printBtn.addEventListener('click', () => {
+        window.print();
+      });
+    })();
+  </script>
+</body>
+</html>
