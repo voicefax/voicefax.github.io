@@ -1,0 +1,1687 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VOICE FAX</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background: #ffffff;
+      color: #000000;
+      font-family: "Courier New", Courier, monospace;
+      min-height: 100vh;
+      -webkit-font-smoothing: none;
+    }
+
+    .app {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 24px 18px 64px;
+    }
+
+    header {
+      border-top: 3px solid #000000;
+      border-bottom: 3px solid #000000;
+      padding: 12px 0;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+    }
+
+    .sub {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .mode-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-left: 2px solid #000000;
+      border-right: 2px solid #000000;
+      border-bottom: 2px solid #000000;
+    }
+
+    button {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: #ffffff;
+      color: #000000;
+      border: 2px solid #000000;
+      padding: 12px 14px;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    button:hover:not(:disabled) {
+      background: #000000;
+      color: #ffffff;
+    }
+
+    button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .mode-bar button {
+      border: none;
+      padding: 14px 10px;
+    }
+
+    .mode-bar button + button {
+      border-left: 2px solid #000000;
+    }
+
+    .mode-bar button.active {
+      background: #000000;
+      color: #ffffff;
+    }
+
+    .panel {
+      display: none;
+      padding-top: 20px;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .input-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .input-tabs button.active {
+      background: #000000;
+      color: #ffffff;
+    }
+
+    .box {
+      border: 2px solid #000000;
+      padding: 14px;
+      margin-bottom: 16px;
+      background: #ffffff;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .row:last-child {
+      margin-bottom: 0;
+    }
+
+    label.file-btn {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 2px solid #000000;
+      padding: 10px 14px;
+      cursor: pointer;
+      background: #ffffff;
+      color: #000000;
+    }
+
+    label.file-btn:hover {
+      background: #000000;
+      color: #ffffff;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .opts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .opts button {
+      padding: 7px 10px;
+      font-size: 11px;
+    }
+
+    .opts button.active {
+      background: #000000;
+      color: #ffffff;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      border: 2px solid #000000;
+      background: #ffffff;
+      color: #000000;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 15px;
+      line-height: 1.4;
+      padding: 12px;
+      resize: vertical;
+      border-radius: 0;
+    }
+
+    .preview-wrap {
+      border: 2px solid #000000;
+      background: #ffffff;
+      padding: 8px;
+      text-align: center;
+    }
+
+    canvas.page-canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #ffffff;
+      image-rendering: pixelated;
+    }
+
+    canvas.sketch-canvas {
+      display: block;
+      width: 100%;
+      height: 240px;
+      border: 2px solid #000000;
+      background: #ffffff;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .actions .primary {
+      flex: 1 1 200px;
+      background: #000000;
+      color: #ffffff;
+    }
+
+    .actions .primary:hover:not(:disabled) {
+      background: #ffffff;
+      color: #000000;
+    }
+
+    .status {
+      border: 2px solid #000000;
+      padding: 12px 14px;
+      font-size: 12px;
+      line-height: 1.5;
+      letter-spacing: 0.04em;
+      background: #ffffff;
+      margin-bottom: 14px;
+    }
+
+    .status-line {
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .paper-roll {
+      border: 2px solid #000000;
+      padding: 10px;
+      background: #ffffff;
+      margin-bottom: 14px;
+    }
+
+    .paper-roll-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #000000;
+    }
+
+    .meta {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    @media print {
+      header, .mode-bar, .input-tabs, .panel#sendPanel, .actions, .status, .paper-roll-label {
+        display: none !important;
+      }
+      .app {
+        max-width: 100%;
+        padding: 0;
+      }
+      .paper-roll {
+        border: none;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>VOICE FAX</h1>
+      <div class="sub">ACOUSTIC TELECOPIER</div>
+    </header>
+
+    <div class="mode-bar" role="tablist">
+      <button id="tabSend" class="active" type="button">SEND</button>
+      <button id="tabReceive" type="button">RECEIVE</button>
+    </div>
+
+    <!-- SEND PANEL -->
+    <section id="sendPanel" class="panel active">
+      <div class="input-tabs">
+        <button id="srcFile" class="active" type="button">PHOTO / DOC / PDF</button>
+        <button id="srcSketch" type="button">SKETCH</button>
+        <button id="srcNote" type="button">NOTE</button>
+      </div>
+
+      <!-- FILE / PDF SOURCE -->
+      <div id="boxFile" class="box">
+        <div class="row">
+          <label class="file-btn">
+            CHOOSE FILE
+            <input id="fileInput" type="file" accept="image/*,.pdf,application/pdf" />
+          </label>
+          <div class="opts">
+            <button id="modeSharp" class="active" type="button">SHARP TEXT</button>
+            <button id="modeDither" type="button">PHOTO DITHER</button>
+          </div>
+        </div>
+        <div id="pdfPagesRow" class="row" style="display:none;">
+          <span class="meta" id="pdfInfo">PDF PAGES:</span>
+          <div class="opts" id="pdfPageButtons"></div>
+        </div>
+        <div class="preview-wrap">
+          <canvas id="sendCanvas" class="page-canvas" width="512" height="320"></canvas>
+        </div>
+      </div>
+
+      <!-- SKETCH SOURCE -->
+      <div id="boxSketch" class="box" style="display:none;">
+        <div class="row">
+          <span class="meta">DRAW ON PAGE</span>
+          <button id="clearSketch" type="button" style="padding:7px 10px;font-size:11px;">CLEAR</button>
+        </div>
+        <canvas id="sketchPad" class="sketch-canvas" width="512" height="240"></canvas>
+      </div>
+
+      <!-- NOTE SOURCE -->
+      <div id="boxNote" class="box" style="display:none;">
+        <textarea id="noteText" placeholder="TYPE FAX MESSAGE HERE..."></textarea>
+      </div>
+
+      <div class="actions">
+        <button id="sendFaxBtn" class="primary" type="button">SEND FAX</button>
+        <button id="skipHandshakeBtn" type="button" style="display:none;">SKIP HANDSHAKE</button>
+        <button id="stopSendBtn" type="button" disabled>STOP</button>
+      </div>
+
+      <div class="status" id="sendStatus">
+        <div class="status-line">READY</div>
+        <div class="meta" id="sendDetail">SELECT A FILE, SKETCH, OR NOTE, THEN TAP SEND FAX.</div>
+      </div>
+    </section>
+
+    <!-- RECEIVE PANEL -->
+    <section id="receivePanel" class="panel">
+      <div class="actions">
+        <button id="listenBtn" class="primary" type="button">LISTEN</button>
+        <button id="stopListenBtn" type="button" disabled>STOP</button>
+        <button id="savePngBtn" type="button" disabled>DOWNLOAD PNG</button>
+        <button id="printBtn" type="button" disabled>PRINT</button>
+      </div>
+
+      <div class="status" id="recvStatus">
+        <div class="status-line">IDLE</div>
+        <div class="meta" id="recvDetail">TAP LISTEN AND PLACE DEVICES NEAR EACH OTHER.</div>
+      </div>
+
+      <div class="paper-roll">
+        <div class="paper-roll-label">RECEIVED PAGE</div>
+        <canvas id="recvCanvas" class="page-canvas" width="512" height="320"></canvas>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      // =========================================================================
+      // CONSTANTS & ACOUSTIC MODEM CONFIG
+      // =========================================================================
+      const PAGE_W = 512;
+      const MAX_PAGE_H = 384;
+      const SAMPLE_RATE_DEFAULT = 44100;
+
+      // Reliable speaker-to-mic carrier bank (1,550 Hz - 3,950 Hz)
+      // 12 data subcarriers + 1 pilot subcarrier = 13 tones
+      const DATA_FREQS = [
+        1550, 1730, 1910, 2090, 2270, 2450,
+        2630, 2810, 2990, 3170, 3350, 3530
+      ];
+      const PILOT_FREQ = 3850;
+      const SYMBOL_SEC = 0.055;     // ~18.18 symbols/sec (~218 bps raw, compressed)
+      const TONE_ON_SEC = 0.044;    // clean tone burst with short guard gap
+
+      // =========================================================================
+      // UI REFERENCES
+      // =========================================================================
+      const tabSend = document.getElementById('tabSend');
+      const tabReceive = document.getElementById('tabReceive');
+      const sendPanel = document.getElementById('sendPanel');
+      const receivePanel = document.getElementById('receivePanel');
+
+      const srcFile = document.getElementById('srcFile');
+      const srcSketch = document.getElementById('srcSketch');
+      const srcNote = document.getElementById('srcNote');
+      const boxFile = document.getElementById('boxFile');
+      const boxSketch = document.getElementById('boxSketch');
+      const boxNote = document.getElementById('boxNote');
+
+      const fileInput = document.getElementById('fileInput');
+      const modeSharp = document.getElementById('modeSharp');
+      const modeDither = document.getElementById('modeDither');
+      const pdfPagesRow = document.getElementById('pdfPagesRow');
+      const pdfInfo = document.getElementById('pdfInfo');
+      const pdfPageButtons = document.getElementById('pdfPageButtons');
+
+      const sendCanvas = document.getElementById('sendCanvas');
+      const sendCtx = sendCanvas.getContext('2d', { willReadFrequently: true });
+
+      const sketchPad = document.getElementById('sketchPad');
+      const sketchCtx = sketchPad.getContext('2d', { willReadFrequently: true });
+      const clearSketch = document.getElementById('clearSketch');
+
+      const noteText = document.getElementById('noteText');
+
+      const sendFaxBtn = document.getElementById('sendFaxBtn');
+      const skipHandshakeBtn = document.getElementById('skipHandshakeBtn');
+      const stopSendBtn = document.getElementById('stopSendBtn');
+      const sendStatus = document.getElementById('sendStatus');
+      const sendDetail = document.getElementById('sendDetail');
+
+      const listenBtn = document.getElementById('listenBtn');
+      const stopListenBtn = document.getElementById('stopListenBtn');
+      const savePngBtn = document.getElementById('savePngBtn');
+      const printBtn = document.getElementById('printBtn');
+      const recvStatus = document.getElementById('recvStatus');
+      const recvDetail = document.getElementById('recvDetail');
+      const recvCanvas = document.getElementById('recvCanvas');
+      const recvCtx = recvCanvas.getContext('2d', { willReadFrequently: true });
+
+      // =========================================================================
+      // STATE
+      // =========================================================================
+      let activeSource = 'file';
+      let scanMode = 'sharp';
+      let sourceImage = null;
+      let pdfDoc = null;
+      let pdfjsLibRef = null;
+
+      let audioCtx = null;
+      let micStream = null;
+      let micSource = null;
+      let analyser = null;
+      let listenTimer = null;
+      let handshakeTimeout = null;
+      let skipBtnTimeout = null;
+      let sendAbort = false;
+      let handshakeConfirmed = false;
+      let isListening = false;
+      let isSending = false;
+
+      // Receiver state
+      let recvState = 'IDLE'; // IDLE | WAITING_CNG | RECEIVING | DONE
+      let recvMeta = null;
+      let recvPackets = null;
+      let recvPacketCount = 0;
+      let lastSymbolTime = 0;
+      let expectedSymIdx = 0;
+      let frameBuffer = [];
+      let cngHits = 0;
+
+      // =========================================================================
+      // HELPERS: STATUS & CANVASES
+      // =========================================================================
+      function setSendStatus(line, detail) {
+        sendStatus.querySelector('.status-line').textContent = line;
+        sendDetail.textContent = detail || '';
+      }
+
+      function setRecvStatus(line, detail) {
+        recvStatus.querySelector('.status-line').textContent = line;
+        recvDetail.textContent = detail || '';
+      }
+
+      function initWhiteCanvas(ctx, w, h) {
+        ctx.canvas.width = w;
+        ctx.canvas.height = h;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+      }
+
+      initWhiteCanvas(sendCtx, PAGE_W, 260);
+      initWhiteCanvas(sketchCtx, PAGE_W, 240);
+      initWhiteCanvas(recvCtx, PAGE_W, 260);
+
+      // Draw a default clean fax cover/sample on sendCanvas
+      function drawWelcomeSample() {
+        initWhiteCanvas(sendCtx, PAGE_W, 220);
+        sendCtx.fillStyle = '#000000';
+        sendCtx.font = 'bold 22px "Courier New", monospace';
+        sendCtx.fillText('VOICE FAX READY', 24, 48);
+        sendCtx.fillRect(24, 60, PAGE_W - 48, 3);
+        sendCtx.font = '16px "Courier New", monospace';
+        sendCtx.fillText('UPLOAD A PHOTO, DOC, OR PDF,', 24, 96);
+        sendCtx.fillText('DRAW A SKETCH, OR TYPE A NOTE.', 24, 122);
+        sendCtx.fillText('1-BIT MONOCHROME HIGH-CLARITY SCAN', 24, 158);
+      }
+      drawWelcomeSample();
+
+      // =========================================================================
+      // TAB & SOURCE SWITCHING
+      // =========================================================================
+      tabSend.addEventListener('click', () => {
+        tabSend.classList.add('active');
+        tabReceive.classList.remove('active');
+        sendPanel.classList.add('active');
+        receivePanel.classList.remove('active');
+      });
+
+      tabReceive.addEventListener('click', () => {
+        tabReceive.classList.add('active');
+        tabSend.classList.remove('active');
+        receivePanel.classList.add('active');
+        sendPanel.classList.remove('active');
+      });
+
+      function setSource(src) {
+        activeSource = src;
+        srcFile.classList.toggle('active', src === 'file');
+        srcSketch.classList.toggle('active', src === 'sketch');
+        srcNote.classList.toggle('active', src === 'note');
+        boxFile.style.display = src === 'file' ? 'block' : 'none';
+        boxSketch.style.display = src === 'sketch' ? 'block' : 'none';
+        boxNote.style.display = src === 'note' ? 'block' : 'none';
+      }
+
+      srcFile.addEventListener('click', () => setSource('file'));
+      srcSketch.addEventListener('click', () => setSource('sketch'));
+      srcNote.addEventListener('click', () => setSource('note'));
+
+      modeSharp.addEventListener('click', () => {
+        scanMode = 'sharp';
+        modeSharp.classList.add('active');
+        modeDither.classList.remove('active');
+        if (sourceImage) renderImageToSendCanvas(sourceImage);
+      });
+
+      modeDither.addEventListener('click', () => {
+        scanMode = 'dither';
+        modeDither.classList.add('active');
+        modeSharp.classList.remove('active');
+        if (sourceImage) renderImageToSendCanvas(sourceImage);
+      });
+
+      // =========================================================================
+      // 1-BIT MONOCHROME SCANNER (SHARP TEXT & ATKINSON DITHER)
+      // =========================================================================
+      function applyMonochromeScan(ctx, w, h, mode) {
+        const imgData = ctx.getImageData(0, 0, w, h);
+        const data = imgData.data;
+        const gray = new Float32Array(w * h);
+
+        for (let i = 0, p = 0; i < data.length; i += 4, p++) {
+          // Standard luminance
+          gray[p] = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+        }
+
+        if (mode === 'sharp') {
+          // Local mean / contrast boost for crisp black-and-white text & lines
+          const radius = 8;
+          const integral = new Float64Array((w + 1) * (h + 1));
+          for (let y = 1; y <= h; y++) {
+            let rowSum = 0;
+            for (let x = 1; x <= w; x++) {
+              rowSum += gray[(y - 1) * w + (x - 1)];
+              integral[y * (w + 1) + x] = integral[(y - 1) * (w + 1) + x] + rowSum;
+            }
+          }
+
+          for (let y = 0; y < h; y++) {
+            const y0 = Math.max(0, y - radius);
+            const y1 = Math.min(h - 1, y + radius);
+            for (let x = 0; x < w; x++) {
+              const x0 = Math.max(0, x - radius);
+              const x1 = Math.min(w - 1, x + radius);
+              const count = (x1 - x0 + 1) * (y1 - y0 + 1);
+              const sum =
+                integral[(y1 + 1) * (w + 1) + (x1 + 1)] -
+                integral[y0 * (w + 1) + (x1 + 1)] -
+                integral[(y1 + 1) * (w + 1) + x0] +
+                integral[y0 * (w + 1) + x0];
+              const localMean = sum / count;
+              const idx = y * w + x;
+              const val = gray[idx] < localMean - 14 ? 0 : 255;
+              const p = idx * 4;
+              data[p] = data[p + 1] = data[p + 2] = val;
+              data[p + 3] = 255;
+            }
+          }
+        } else {
+          // Atkinson dithering for crisp halftone photos
+          const buf = new Float32Array(gray);
+          for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+              const idx = y * w + x;
+              const oldVal = buf[idx];
+              const newVal = oldVal < 138 ? 0 : 255;
+              buf[idx] = newVal;
+              const err = (oldVal - newVal) / 8;
+
+              const spread = [
+                [x + 1, y],
+                [x + 2, y],
+                [x - 1, y + 1],
+                [x, y + 1],
+                [x + 1, y + 1],
+                [x, y + 2]
+              ];
+              for (const [nx, ny] of spread) {
+                if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+                  buf[ny * w + nx] += err;
+                }
+              }
+
+              const p = idx * 4;
+              data[p] = data[p + 1] = data[p + 2] = newVal;
+              data[p + 3] = 255;
+            }
+          }
+        }
+
+        ctx.putImageData(imgData, 0, 0);
+      }
+
+      function renderImageToSendCanvas(imgSource) {
+        const natW = imgSource.width || imgSource.videoWidth || PAGE_W;
+        const natH = imgSource.height || imgSource.videoHeight || 300;
+        const scale = Math.min(1, PAGE_W / natW);
+        let targetW = Math.max(64, Math.round(natW * scale));
+        let targetH = Math.max(48, Math.round(natH * scale));
+        if (targetH > MAX_PAGE_H) {
+          const hScale = MAX_PAGE_H / targetH;
+          targetW = Math.max(64, Math.round(targetW * hScale));
+          targetH = MAX_PAGE_H;
+        }
+        initWhiteCanvas(sendCtx, targetW, targetH);
+        sendCtx.drawImage(imgSource, 0, 0, targetW, targetH);
+        applyMonochromeScan(sendCtx, targetW, targetH, scanMode);
+      }
+
+      // =========================================================================
+      // PDF.JS DYNAMIC LOADER & FILE UPLOAD
+      // =========================================================================
+      async function ensurePdfJs() {
+        if (pdfjsLibRef) return pdfjsLibRef;
+        if (window.pdfjsLib) {
+          pdfjsLibRef = window.pdfjsLib;
+          return pdfjsLibRef;
+        }
+        return new Promise((resolve) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+          script.onload = () => {
+            if (window.pdfjsLib) {
+              window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+              pdfjsLibRef = window.pdfjsLib;
+              resolve(pdfjsLibRef);
+            } else {
+              resolve(null);
+            }
+          };
+          script.onerror = () => resolve(null);
+          document.head.appendChild(script);
+        });
+      }
+
+      async function renderPdfPage(pageNum) {
+        if (!pdfDoc) return;
+        const page = await pdfDoc.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 1.5 });
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = Math.round(viewport.width);
+        tempCanvas.height = Math.round(viewport.height);
+        const tCtx = tempCanvas.getContext('2d');
+        tCtx.fillStyle = '#ffffff';
+        tCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+        await page.render({ canvasContext: tCtx, viewport }).promise;
+        sourceImage = tempCanvas;
+        renderImageToSendCanvas(sourceImage);
+        setSendStatus('PDF PAGE LOADED', `RENDERED PAGE ${pageNum} OF ${pdfDoc.numPages} IN 1-BIT SCAN.`);
+      }
+
+      fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        pdfPagesRow.style.display = 'none';
+        pdfPageButtons.innerHTML = '';
+        pdfDoc = null;
+
+        const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+        if (isPdf) {
+          setSendStatus('LOADING PDF', 'PREPARING PDF PAGE...');
+          const pdfjs = await ensurePdfJs();
+          if (!pdfjs) {
+            setSendStatus('PDF LIBRARY UNAVAILABLE', 'COULD NOT LOAD PDF RENDERER. TRY EXPORTING AS PNG/JPG.');
+            return;
+          }
+          const buf = await file.arrayBuffer();
+          pdfDoc = await pdfjs.getDocument({ data: buf }).promise;
+          pdfPagesRow.style.display = 'flex';
+          pdfInfo.textContent = `PDF (${pdfDoc.numPages}P):`;
+
+          const maxBtns = Math.min(pdfDoc.numPages, 8);
+          for (let p = 1; p <= maxBtns; p++) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = `P${p}`;
+            if (p === 1) btn.classList.add('active');
+            btn.addEventListener('click', async () => {
+              pdfPageButtons.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
+              btn.classList.add('active');
+              await renderPdfPage(p);
+            });
+            pdfPageButtons.appendChild(btn);
+          }
+          await renderPdfPage(1);
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            sourceImage = img;
+            renderImageToSendCanvas(sourceImage);
+            setSendStatus('IMAGE SCANNED', `${file.name.toUpperCase()} CONVERTED TO 1-BIT FAX.`);
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // =========================================================================
+      // SKETCHPAD & NOTE RENDERING
+      // =========================================================================
+      let drawing = false;
+      let lastPt = null;
+
+      function getSketchPos(evt) {
+        const rect = sketchPad.getBoundingClientRect();
+        const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+        const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+        return {
+          x: ((clientX - rect.left) / rect.width) * sketchPad.width,
+          y: ((clientY - rect.top) / rect.height) * sketchPad.height
+        };
+      }
+
+      sketchPad.addEventListener('pointerdown', (e) => {
+        drawing = true;
+        lastPt = getSketchPos(e);
+      });
+
+      sketchPad.addEventListener('pointermove', (e) => {
+        if (!drawing) return;
+        const pt = getSketchPos(e);
+        sketchCtx.strokeStyle = '#000000';
+        sketchCtx.lineWidth = 4;
+        sketchCtx.lineCap = 'round';
+        sketchCtx.lineJoin = 'round';
+        sketchCtx.beginPath();
+        sketchCtx.moveTo(lastPt.x, lastPt.y);
+        sketchCtx.lineTo(pt.x, pt.y);
+        sketchCtx.stroke();
+        lastPt = pt;
+      });
+
+      window.addEventListener('pointerup', () => {
+        drawing = false;
+        lastPt = null;
+      });
+
+      clearSketch.addEventListener('click', () => {
+        initWhiteCanvas(sketchCtx, PAGE_W, 240);
+      });
+
+      function buildPayloadCanvas() {
+        if (activeSource === 'sketch') {
+          const c = document.createElement('canvas');
+          c.width = PAGE_W;
+          c.height = 240;
+          const ctx = c.getContext('2d', { willReadFrequently: true });
+          ctx.drawImage(sketchPad, 0, 0);
+          applyMonochromeScan(ctx, PAGE_W, 240, 'sharp');
+          return c;
+        }
+        if (activeSource === 'note') {
+          const text = (noteText.value || 'HELLO VIA VOICE FAX').trim();
+          const lines = [];
+          const maxChars = 40;
+          for (const rawLine of text.split('\n')) {
+            let cur = '';
+            for (const word of rawLine.split(/\s+/)) {
+              if (!word) continue;
+              if ((cur + ' ' + word).trim().length > maxChars) {
+                if (cur) lines.push(cur);
+                cur = word.slice(0, maxChars);
+              } else {
+                cur = (cur + ' ' + word).trim();
+              }
+            }
+            lines.push(cur);
+          }
+          const h = Math.max(140, Math.min(MAX_PAGE_H, 56 + lines.length * 26));
+          const c = document.createElement('canvas');
+          c.width = PAGE_W;
+          c.height = h;
+          const ctx = c.getContext('2d', { willReadFrequently: true });
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, PAGE_W, h);
+          ctx.fillStyle = '#000000';
+          ctx.font = 'bold 18px "Courier New", monospace';
+          ctx.fillText('FAX NOTE', 20, 32);
+          ctx.fillRect(20, 42, PAGE_W - 40, 2);
+          ctx.font = 'bold 18px "Courier New", monospace';
+          lines.forEach((ln, idx) => {
+            ctx.fillText(ln, 20, 72 + idx * 26);
+          });
+          applyMonochromeScan(ctx, PAGE_W, h, 'sharp');
+          return c;
+        }
+        return sendCanvas;
+      }
+
+      // =========================================================================
+      // 1-BIT BITPACK + PACKBITS RLE ENCODER / DECODER
+      // =========================================================================
+      function canvasToBits(canvas) {
+        const w = canvas.width;
+        const h = canvas.height;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const d = ctx.getImageData(0, 0, w, h).data;
+        const rawBytes = new Uint8Array(Math.ceil((w * h) / 8));
+        let bitIdx = 0;
+        for (let i = 0; i < d.length; i += 4) {
+          const isBlack = d[i] < 128 ? 1 : 0;
+          if (isBlack) {
+            rawBytes[bitIdx >> 3] |= 1 << (7 - (bitIdx & 7));
+          }
+          bitIdx++;
+        }
+        return rleCompress(rawBytes);
+      }
+
+      function rleCompress(bytes) {
+        // PackBits-style:
+        // If byte === 0x00 (all white run), emit [0x80, count(1..127)]
+        // Else emit raw byte directly (0x01..0xFF)
+        const out = [];
+        let i = 0;
+        while (i < bytes.length) {
+          if (bytes[i] === 0x00) {
+            let run = 1;
+            while (i + run < bytes.length && bytes[i + run] === 0x00 && run < 127) {
+              run++;
+            }
+            out.push(0x80, run);
+            i += run;
+          } else {
+            // Escape 0x80 as [0x80, 0x00]
+            if (bytes[i] === 0x80) {
+              out.push(0x80, 0x00);
+            } else {
+              out.push(bytes[i]);
+            }
+            i++;
+          }
+        }
+        return new Uint8Array(out);
+      }
+
+      function rleDecompress(rle, expectedLen) {
+        const out = new Uint8Array(expectedLen);
+        let o = 0;
+        let i = 0;
+        while (i < rle.length && o < expectedLen) {
+          const b = rle[i++];
+          if (b === 0x80) {
+            if (i >= rle.length) break;
+            const ctrl = rle[i++];
+            if (ctrl === 0x00) {
+              out[o++] = 0x80;
+            } else {
+              for (let k = 0; k < ctrl && o < expectedLen; k++) {
+                out[o++] = 0x00;
+              }
+            }
+          } else {
+            out[o++] = b;
+          }
+        }
+        return out;
+      }
+
+      function crc8(arr) {
+        let crc = 0x00;
+        for (let i = 0; i < arr.length; i++) {
+          crc ^= arr[i];
+          for (let b = 0; b < 8; b++) {
+            crc = crc & 0x80 ? ((crc << 1) ^ 0x07) & 0xff : (crc << 1) & 0xff;
+          }
+        }
+        return crc;
+      }
+
+      // Build packets: each packet has 12 payload bytes (12 symbols = 1 byte per subcarrier)
+      // Packet 0 is header: [0xA5, wHi, wLo, hHi, hLo, totalPktsHi, totalPktsLo, rleLenHi, rleLenMid, rleLenLo, modeByte, crc]
+      // Data packets 1..N: [0x5A, seqHi, seqLo, b0..b7, crc] -> 11 bytes + 0x5A + seq = 12 bytes
+      function buildPackets(canvas) {
+        const w = canvas.width;
+        const h = canvas.height;
+        const compressed = canvasToBits(canvas);
+        const chunkSize = 8;
+        const totalDataPkts = Math.ceil(compressed.length / chunkSize);
+        const packets = [];
+
+        const hdr = new Uint8Array(12);
+        hdr[0] = 0xa5;
+        hdr[1] = (w >> 8) & 0xff;
+        hdr[2] = w & 0xff;
+        hdr[3] = (h >> 8) & 0xff;
+        hdr[4] = h & 0xff;
+        hdr[5] = (totalDataPkts >> 8) & 0xff;
+        hdr[6] = totalDataPkts & 0xff;
+        hdr[7] = (compressed.length >> 16) & 0xff;
+        hdr[8] = (compressed.length >> 8) & 0xff;
+        hdr[9] = compressed.length & 0xff;
+        hdr[10] = 0x01;
+        hdr[11] = crc8(hdr.subarray(0, 11));
+        packets.push(hdr);
+
+        for (let p = 0; p < totalDataPkts; p++) {
+          const pkt = new Uint8Array(12);
+          pkt[0] = 0x5a;
+          pkt[1] = (p >> 8) & 0xff;
+          pkt[2] = p & 0xff;
+          const start = p * chunkSize;
+          for (let j = 0; j < chunkSize; j++) {
+            pkt[3 + j] = start + j < compressed.length ? compressed[start + j] : 0x00;
+          }
+          pkt[11] = crc8(pkt.subarray(0, 11));
+          packets.push(pkt);
+        }
+
+        return { packets, w, h, totalDataPkts, compressedLen: compressed.length };
+      }
+
+      // =========================================================================
+      // AUDIO ENGINE: ITU-T T.30 / V.21 / V.29 QAM FAX GENERATOR
+      // =========================================================================
+      function ensureAudioCtx() {
+        if (!audioCtx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AC({ sampleRate: SAMPLE_RATE_DEFAULT });
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      }
+
+      function playToneBuffer(samples, startTimeOffset = 0) {
+        const ctx = ensureAudioCtx();
+        const buf = ctx.createBuffer(1, samples.length, ctx.sampleRate);
+        buf.getChannelData(0).set(samples);
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        src.connect(ctx.destination);
+        const when = ctx.currentTime + Math.max(0, startTimeOffset);
+        src.start(when);
+        return { duration: samples.length / ctx.sampleRate, when };
+      }
+
+      // T.30 CNG (1100 Hz) or CED (2100 Hz) pure tone with optional 450ms phase reversals
+      function synthSine(function synthSine(freq, durationSec, amp = 0.28, sr = SAMPLE_RATE_DEFAULT) {
+  const n = Math.floor(durationSec * sr);
+  const out = new Float32Array(n);
+
+  const ramp = Math.floor(0.01 * sr);
+  let phase = 0;
+  let polarity = 1;
+
+  for (let i = 0; i < n; i++) {
+    if (freq === 2100 && i > 0 &&
+        i % Math.floor(0.45 * sr) === 0) {
+      polarity *= -1;
+    }
+
+    phase += 2 * Math.PI * freq / sr;
+    if (phase >= 2 * Math.PI) phase -= 2 * Math.PI;
+
+    let envelope = 1;
+    if (i < ramp) envelope = i / ramp;
+    if (i > n - ramp) envelope = (n - i) / ramp;
+
+    out[i] = Math.sin(phase) * amp * polarity * envelope;
+  }
+
+  return out;
+}
+      }
+
+      // ITU-T V.21 Channel 2: 300-baud FSK warble (1650 Hz mark / 1850 Hz space)
+      // Produces the unmistakable rapid fax control-channel trill/chirp
+      function synthV21Burst(durationSec = 0.9, amp = 0.26, sr = SAMPLE_RATE_DEFAULT) {
+  const baud = 300;
+  const bits = [];
+
+  // HDLC flags and framed control data
+  const bytes = [0x7e, 0xff, 0x03, 0x00, 0x7e];
+
+  for (const byte of bytes) {
+    for (let i = 0; i < 8; i++) {
+      bits.push((byte >> i) & 1);
+    }
+  }
+
+  const n = Math.floor(durationSec * sr);
+  const out = new Float32Array(n);
+  let phase = 0;
+
+  for (let i = 0; i < n; i++) {
+    const bitIndex = Math.floor(i / (sr / baud)) % bits.length;
+    const freq = bits[bitIndex] ? 1650 : 1850;
+
+    phase += 2 * Math.PI * freq / sr;
+    if (phase > 2 * Math.PI) phase -= 2 * Math.PI;
+
+    const ramp = Math.min(1, i / (sr * 0.005), (n - i) / (sr * 0.005));
+    out[i] = Math.sin(phase) * amp * Math.max(0, ramp);
+  }
+
+  return out;
+}
+      }
+
+      // Root-raised-cosine pulse shaping for V.29 2400-baud symbols
+      function rrcKernel(t, beta, T) {
+        if (t === 0) return 1 - beta + (4 * beta) / Math.PI;
+        const absT = Math.abs(t);
+        if (Math.abs(absT - T / (4 * beta)) < 1e-9) {
+          return (beta / Math.SQRT2) * (
+            (1 + 2 / Math.PI) * Math.sin(Math.PI / (4 * beta)) +
+            (1 - 2 / Math.PI) * Math.cos(Math.PI / (4 * beta))
+          );
+        }
+        const x = t / T;
+        const num = Math.sin(Math.PI * x * (1 - beta)) + 4 * beta * x * Math.cos(Math.PI * x * (1 + beta));
+        const den = Math.PI * x * (1 - 16 * beta * beta * x * x);
+        return den === 0 ? 0 : num / den;
+      }
+
+      // ITU-T V.29 training sequence + 1700 Hz QAM/phase-reversal line signal
+      function synthV29Training(sr = SAMPLE_RATE_DEFAULT) {
+        const seg1 = new Float32Array(Math.floor(0.08 * sr));
+
+        // 1700 Hz carrier with 180-deg phase reversals at 2400 baud
+        const seg2 = new Float32Array(Math.floor(0.28 * sr));
+        const revPeriod = Math.max(1, Math.floor(sr / 1200));
+        for (let i = 0; i < seg2.length; i++) {
+          const sign = Math.floor(i / revPeriod) % 2 === 0 ? 1 : -1;
+          seg2[i] = sign * Math.sin(2 * Math.PI * 1700 * (i / sr)) * 0.28;
+        }
+
+        // Equalizer sweep / alternating tones (1200 Hz & 2100 Hz)
+        const seg3 = new Float32Array(Math.floor(0.42 * sr));
+        const step = Math.max(1, Math.floor(sr / 180));
+        for (let i = 0; i < seg3.length; i++) {
+          const idx = Math.floor(i / step);
+          const f = idx % 3 === 0 ? 1200 : (idx % 3 === 1 ? 2100 : 1700);
+          seg3[i] = Math.sin(2 * Math.PI * f * (i / sr)) * 0.25;
+        }
+
+        // 2400-baud 16-QAM around 1700 Hz carrier
+        const seg4 = new Float32Array(Math.floor(0.65 * sr));
+        const baud = 2400;
+        const symSamples = Math.max(1, Math.floor(sr / baud));
+        const numSyms = Math.ceil(seg4.length / symSamples) + 4;
+        const levels = [-3, -1, 1, 3];
+        let seed = 0x517cc1b7;
+        const symsI = new Float32Array(numSyms);
+        const symsQ = new Float32Array(numSyms);
+        for (let s = 0; s < numSyms; s++) {
+          seed = (seed * 1664525 + 1013904223) >>> 0;
+          symsI[s] = levels[(seed >>> 3) & 3] / 3;
+          seed = (seed * 1664525 + 1013904223) >>> 0;
+          symsQ[s] = levels[(seed >>> 3) & 3] / 3;
+        }
+        const T = 1 / baud;
+        for (let i = 0; i < seg4.length; i++) {
+          const t = i / sr;
+          const cSym = Math.floor(i / symSamples);
+          let bbI = 0, bbQ = 0;
+          for (let k = cSym - 2; k <= cSym + 2; k++) {
+            if (k >= 0 && k < numSyms) {
+              const w = rrcKernel(t - k * T, 0.35, T);
+              bbI += symsI[k] * w;
+              bbQ += symsQ[k] * w;
+            }
+          }
+          const wc = 2 * Math.PI * 1700 * t;
+          seg4[i] = (bbI * Math.cos(wc) - bbQ * Math.sin(wc)) * 0.3;
+        }
+
+        const total = new Float32Array(seg1.length + seg2.length + seg3.length + seg4.length);
+        let pos = 0;
+        for (const part of [seg1, seg2, seg3, seg4]) {
+          total.set(part, pos);
+          pos += part.length;
+        }
+        return total;
+      }
+
+      function synthFaxLinePulse(sr = SAMPLE_RATE_DEFAULT, durSec = 0.055) {
+        const n = Math.floor(durSec * sr);
+        const out = new Float32Array(n);
+        const qam = [-3, -1, 1, 3];
+        let seed = 0x9e3779b9;
+        const baud = 2400;
+        const symLen = Math.max(1, Math.floor(sr / baud));
+        let curI = 1, curQ = 1, lastSym = -1;
+        for (let i = 0; i < n; i++) {
+          const sym = Math.floor(i / symLen);
+          if (sym !== lastSym) {
+            lastSym = sym;
+            seed = (seed * 1664525 + 1013904223) >>> 0;
+            curI = qam[(seed >>> 3) & 3] / 3;
+            seed = (seed * 1664525 + 1013904223) >>> 0;
+            curQ = qam[(seed >>> 3) & 3] / 3;
+          }
+          const t = i / sr;
+          const wc = 2 * Math.PI * 1700 * t;
+          out[i] = (curI * Math.cos(wc) - curQ * Math.sin(wc)) * 0.25;
+        }
+        return out;
+      }
+
+      // Encode 12 bytes (1 byte per subcarrier) into a single parallel multi-tone symbol
+      // Each byte (0..255) selects one of 8 phase/freq micro-bins around its subcarrier:
+      // Actually even cleaner & more reliable for mics:
+      // We have 12 DATA_FREQS. Each subcarrier can represent 1 bit (ON/OFF or 2 frequencies)
+      // OR even more reliable: 12 subcarriers where each subcarrier has a dedicated ON/OFF state
+      // for 12 bits per symbol (1.5 bytes/symbol), OR 6 subcarriers x 2 tones = 12 bits/symbol!
+      // Let's use 12 subcarriers with ON/OFF keying + PILOT_FREQ always ON during data symbols!
+      // 12 subcarriers = 12 bits = 1.5 bytes per symbol.
+      function encode12BitSymbol(bits12, sr = SAMPLE_RATE_DEFAULT) {
+        const n = Math.floor(SYMBOL_SEC * sr);
+        const onLen = Math.floor(TONE_ON_SEC * sr);
+        const out = new Float32Array(n);
+        const ramp = Math.min(Math.floor(0.003 * sr), Math.floor(onLen / 4));
+
+        // Count active tones to normalize amplitude so it never clips
+        let activeCount = 1; // pilot
+        for (let b = 0; b < 12; b++) {
+          if ((bits12 >> b) & 1) activeCount++;
+        }
+        const perToneAmp = Math.min(0.18, 0.72 / activeCount);
+
+        for (let i = 0; i < onLen; i++) {
+          let env = 1;
+          if (i < ramp) env = i / ramp;
+          else if (i > onLen - ramp) env = (onLen - i) / ramp;
+
+          const t = i / sr;
+          let sample = Math.sin(2 * Math.PI * PILOT_FREQ * t) * perToneAmp * env;
+          for (let b = 0; b < 12; b++) {
+            if ((bits12 >> b) & 1) {
+              sample += Math.sin(2 * Math.PI * DATA_FREQS[b] * t) * perToneAmp * env;
+            }
+          }
+          out[i] = sample;
+        }
+        return out;
+      }
+
+      function bytesTo12BitSymbols(bytes) {
+        // Pack bytes into 12-bit words (MSB first)
+        const symbols = [];
+        let bitPool = 0;
+        let bitCount = 0;
+        for (let i = 0; i < bytes.length; i++) {
+          bitPool = (bitPool << 8) | bytes[i];
+          bitCount += 8;
+          while (bitCount >= 12) {
+            bitCount -= 12;
+            symbols.push((bitPool >> bitCount) & 0xfff);
+          }
+        }
+        if (bitCount > 0) {
+          symbols.push((bitPool << (12 - bitCount)) & 0xfff);
+        }
+        return symbols;
+      }
+
+      function symbolsToBytes(symbols, targetByteLen) {
+        const out = [];
+        let bitPool = 0;
+        let bitCount = 0;
+        for (let i = 0; i < symbols.length; i++) {
+          bitPool = (bitPool << 12) | (symbols[i] & 0xfff);
+          bitCount += 12;
+          while (bitCount >= 8 && out.length < targetByteLen) {
+            bitCount -= 8;
+            out.push((bitPool >> bitCount) & 0xff);
+          }
+        }
+        return new Uint8Array(out);
+      }
+
+      // =========================================================================
+      // MICROPHONE CAPTURE & TONE DETECTOR (GOERTZEL)
+      // =========================================================================
+      async function startMic() {
+        if (micStream) return true;
+        try {
+          const ctx = ensureAudioCtx();
+          micStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              echoCancellation: false,
+              noiseSuppression: false,
+              autoGainControl: false
+            }
+          });
+          micSource = ctx.createMediaStreamSource(micStream);
+          analyser = ctx.createAnalyser();
+          analyser.fftSize = 2048;
+          analyser.smoothingTimeConstant = 0.25;
+          micSource.connect(analyser);
+          return true;
+        } catch (err) {
+          return false;
+        }
+      }
+
+      function stopMic() {
+        if (listenTimer) {
+          clearInterval(listenTimer);
+          listenTimer = null;
+        }
+        if (micSource) {
+          try { micSource.disconnect(); } catch (_) {}
+          micSource = null;
+        }
+        if (micStream) {
+          micStream.getTracks().forEach((t) => t.stop());
+          micStream = null;
+        }
+        analyser = null;
+      }
+
+      function goertzelMag(samples, freq, sr) {
+        const k = Math.round((samples.length * freq) / sr);
+        const omega = (2 * Math.PI * k) / samples.length;
+        const coeff = 2 * Math.cos(omega);
+        let q0 = 0, q1 = 0, q2 = 0;
+        for (let i = 0; i < samples.length; i++) {
+          q0 = coeff * q1 - q2 + samples[i];
+          q2 = q1;
+          q1 = q0;
+        }
+        const magSq = q1 * q1 + q2 * q2 - q1 * q2 * coeff;
+        return Math.sqrt(Math.max(0, magSq)) / samples.length;
+      }
+
+      // =========================================================================
+      // SEND FLOW: CNG HANDSHAKE -> 5s SKIP OPTION -> V.29 + DATA BURST
+      // =========================================================================
+      function waitMs(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      function synthFaxLinePulse(sr = SAMPLE_RATE_DEFAULT, durSec = 0.055) {
+        const n = Math.floor(durSec * sr);
+        const out = new Float32Array(n);
+        const qam = [-3, -1, 1, 3];
+        let seed = 0x9e3779b9;
+        const baud = 2400;
+        const symLen = Math.max(1, Math.floor(sr / baud));
+        let curI = 1, curQ = 1, lastSym = -1;
+        for (let i = 0; i < n; i++) {
+          const sym = Math.floor(i / symLen);
+          if (sym !== lastSym) {
+            lastSym = sym;
+            seed = (seed * 1664525 + 1013904223) >>> 0;
+            curI = qam[(seed >>> 3) & 3] / 3;
+            seed = (seed * 1664525 + 1013904223) >>> 0;
+            curQ = qam[(seed >>> 3) & 3] / 3;
+          }
+          const t = i / sr;
+          const wc = 2 * Math.PI * 1700 * t;
+          out[i] = (curI * Math.cos(wc) - curQ * Math.sin(wc)) * 0.22;
+        }
+        return out;
+      }
+
+      async function transmitPagePayload(packets) {
+        const ctx = ensureAudioCtx();
+        const sr = ctx.sampleRate;
+
+        setSendStatus('V.29 TRAINING & FAX TONES', 'PLAYING FAX HANDSHAKE & EQUALIZER SEQUENCE...');
+        const v21Pre = synthV21Burst(0.35, 0.24, sr);
+        const v29 = synthV29Training(sr);
+        const intro = new Float32Array(v21Pre.length + v29.length);
+        intro.set(v21Pre, 0);
+        intro.set(v29, v21Pre.length);
+        const introInfo = playToneBuffer(intro, 0.04);
+        await waitMs((introInfo.duration + 0.12) * 1000);
+        if (sendAbort) return;
+
+        // Flatten all packet bytes into one stream
+        const totalBytes = packets.length * 12;
+        const streamBytes = new Uint8Array(totalBytes);
+        for (let p = 0; p < packets.length; p++) {
+          streamBytes.set(packets[p], p * 12);
+        }
+
+        const dataSymbols = bytesTo12BitSymbols(streamBytes);
+        // Prepend sync symbol (all 12 data tones ON = 0xfff) so receiver locks frame start
+        const syncSym = encode12BitSymbol(0xfff, sr);
+        const endSym = encode12BitSymbol(0xaaa, sr);
+
+        const symBuffers = [syncSym];
+        for (let s = 0; s < dataSymbols.length; s++) {
+          const dataBuf = encode12BitSymbol(dataSymbols[s], sr);
+          // Mix in authentic V.29 1700 Hz QAM carrier pulse on every symbol so the fax sound stays present
+          const faxPulse = synthFaxLinePulse(sr, SYMBOL_SEC);
+          const mixed = new Float32Array(dataBuf.length);
+          for (let i = 0; i < dataBuf.length; i++) {
+            mixed[i] = dataBuf[i] * 0.85 + (faxPulse[i] || 0) * 0.65;
+          }
+          symBuffers.push(mixed);
+        }
+        symBuffers.push(endSym);
+
+        // Schedule symbols in clean batches so UI updates smoothly
+        let offsetSec = 0.04;
+        for (let s = 0; s < symBuffers.length; s++) {
+          if (sendAbort) return;
+          playToneBuffer(symBuffers[s], offsetSec);
+          offsetSec += SYMBOL_SEC;
+
+          if (s % 6 === 0) {
+            const pct = Math.min(100, Math.round((s / symBuffers.length) * 100));
+            setSendStatus(
+              `TRANSMITTING FAX DATA (${pct}%)`,
+              `SYMBOL ${s + 1} OF ${symBuffers.length} ACROSS ACOUSTIC LINK...`
+            );
+            await waitMs(SYMBOL_SEC * 6 * 1000);
+          }
+        }
+
+        const remainingMs = Math.max(0, offsetSec * 1000);
+        await waitMs(remainingMs);
+        if (sendAbort) return;
+
+        // Closing V.21 EOP / DCN warble
+        const eopBuf = synthV21Burst(0.55, 0.24, sr);
+        playToneBuffer(eopBuf, 0.05);
+        await waitMs(620);
+
+        setSendStatus('FAX TRANSMISSION COMPLETE', `SENT ${packets.length} PACKETS OVER SOUND.`);
+      }
+
+      async function beginSendFax() {
+        if (isSending) return;
+        sendAbort = false;
+        handshakeConfirmed = false;
+        isSending = true;
+        sendFaxBtn.disabled = true;
+        stopSendBtn.disabled = false;
+        skipHandshakeBtn.style.display = 'none';
+
+        const payloadCanvas = buildPayloadCanvas();
+        const { packets, totalDataPkts } = buildPackets(payloadCanvas);
+
+        const micOk = await startMic();
+        const ctx = ensureAudioCtx();
+        const sr = ctx.sampleRate;
+
+        setSendStatus(
+          'CALLING RECEIVER (1,100 HZ CNG)',
+          micOk
+            ? 'WAITING FOR 2,100 HZ CED / V.21 HANDSHAKE REPLY...'
+            : 'MIC UNAVAILABLE — SKIP HANDSHAKE WILL APPEAR IN 5 SECONDS.'
+        );
+
+        // Show SKIP HANDSHAKE after 5 seconds
+        skipBtnTimeout = setTimeout(() => {
+          if (isSending && !handshakeConfirmed) {
+            skipHandshakeBtn.style.display = 'inline-block';
+          }
+        }, 5000);
+
+        // Poll microphone for CED (2100 Hz) or V.21 (1650/1850 Hz) while pulsing CNG (1100 Hz)
+        let elapsed = 0;
+        let lastCngTime = -999;
+        const timeDomain = analyser ? new Float32Array(analyser.fftSize) : null;
+
+        while (isSending && !sendAbort && !handshakeConfirmed) {
+          if (elapsed - lastCngTime >= 2.6) {
+            lastCngTime = elapsed;
+            const cng = synthSine(1100, 0.5, 0.24, sr);
+            playToneBuffer(cng, 0.02);
+          }
+
+          if (analyser && timeDomain) {
+            analyser.getFloatTimeDomainData(timeDomain);
+            const m2100 = goertzelMag(timeDomain, 2100, sr);
+            const m1650 = goertzelMag(timeDomain, 1650, sr);
+            const m1850 = goertzelMag(timeDomain, 1850, sr);
+            if (m2100 > 0.015 || (m1650 > 0.012 && m1850 > 0.012)) {
+              handshakeConfirmed = true;
+              break;
+            }
+          }
+
+          await waitMs(120);
+          elapsed += 0.12;
+        }
+
+        clearTimeout(skipBtnTimeout);
+        skipHandshakeBtn.style.display = 'none';
+
+        if (sendAbort || !isSending) {
+          cleanupSend();
+          return;
+        }
+
+        setSendStatus(
+          'HANDSHAKE CONFIRMED',
+          `CONNECTION LOCKED — SENDING ${totalDataPkts} DATA PACKETS...`
+        );
+        await waitMs(250);
+        await transmitPagePayload(packets);
+        cleanupSend();
+      }
+
+      skipHandshakeBtn.addEventListener('click', () => {
+        if (!isSending) return;
+        handshakeConfirmed = true;
+        skipHandshakeBtn.style.display = 'none';
+      });
+
+      function cleanupSend() {
+        isSending = false;
+        sendFaxBtn.disabled = false;
+        stopSendBtn.disabled = true;
+        skipHandshakeBtn.style.display = 'none';
+        clearTimeout(skipBtnTimeout);
+        stopMic();
+      }
+
+      stopSendBtn.addEventListener('click', () => {
+        sendAbort = true;
+        cleanupSend();
+        setSendStatus('STOPPED', 'TRANSMISSION CANCELLED.');
+      });
+
+      sendFaxBtn.addEventListener('click', beginSendFax);
+
+      // =========================================================================
+      // RECEIVE FLOW: CNG -> CED + V.21 REPLY -> LIVE PROGRESSIVE PAGE PRINT
+      // =========================================================================
+      function decode12BitSymbol(samples, sr) {
+        const pilotMag = goertzelMag(samples, PILOT_FREQ, sr);
+        if (pilotMag < 0.007) {
+          return { valid: false, bits: 0, pilotMag };
+        }
+        // Adaptive threshold relative to pilot magnitude
+        const thresh = Math.max(0.005, pilotMag * 0.42);
+        let bits = 0;
+        for (let b = 0; b < 12; b++) {
+          const mag = goertzelMag(samples, DATA_FREQS[b], sr);
+          if (mag >= thresh) {
+            bits |= 1 << b;
+          }
+        }
+        return { valid: true, bits, pilotMag };
+      }
+
+      function renderReceivedPage() {
+        if (!recvMeta || !recvPackets) return;
+        const { w, h, totalDataPkts, compressedLen } = recvMeta;
+        initWhiteCanvas(recvCtx, w, h);
+        const imgData = recvCtx.getImageData(0, 0, w, h);
+        const px = imgData.data;
+
+        // Assemble whatever RLE bytes we have so far (0x00 fill for missing chunks)
+        const rleStream = new Uint8Array(totalDataPkts * 8);
+        for (let p = 0; p < totalDataPkts; p++) {
+          const pkt = recvPackets[p];
+          if (pkt) {
+            rleStream.set(pkt.subarray(3, 11), p * 8);
+          }
+        }
+
+        const rawBytes = rleDecompress(rleStream.subarray(0, compressedLen), Math.ceil((w * h) / 8));
+        const totalPixels = w * h;
+        for (let idx = 0; idx < totalPixels; idx++) {
+          const byteVal = rawBytes[idx >> 3] || 0;
+          const isBlack = (byteVal >> (7 - (idx & 7))) & 1;
+          const v = isBlack ? 0 : 255;
+          const p = idx * 4;
+          px[p] = px[p + 1] = px[p + 2] = v;
+          px[p + 3] = 255;
+        }
+        recvCtx.putImageData(imgData, 0, 0);
+        savePngBtn.disabled = false;
+        printBtn.disabled = false;
+      }
+
+      function processIncomingPacketBytes(pkt12) {
+        const check = crc8(pkt12.subarray(0, 11));
+        if (check !== pkt12[11]) return; // bad CRC, skip
+
+        if (pkt12[0] === 0xa5) {
+          // Header packet
+          const w = (pkt12[1] << 8) | pkt12[2];
+          const h = (pkt12[3] << 8) | pkt12[4];
+          const totalDataPkts = (pkt12[5] << 8) | pkt12[6];
+          const compressedLen = (pkt12[7] << 16) | (pkt12[8] << 8) | pkt12[9];
+          if (w > 0 && w <= 1024 && h > 0 && h <= 1024 && totalDataPkts > 0 && totalDataPkts <= 4000) {
+            if (!recvMeta) {
+              recvMeta = { w, h, totalDataPkts, compressedLen };
+              recvPackets = new Array(totalDataPkts).fill(null);
+              recvPacketCount = 0;
+              initWhiteCanvas(recvCtx, w, h);
+            }
+          }
+        } else if (pkt12[0] === 0x5a && recvMeta) {
+          const seq = (pkt12[1] << 8) | pkt12[2];
+          if (seq >= 0 && seq < recvMeta.totalDataPkts && !recvPackets[seq]) {
+            recvPackets[seq] = pkt12.slice(0);
+            recvPacketCount++;
+            renderReceivedPage();
+            setRecvStatus(
+              `PRINTING FAX (${recvPacketCount}/${recvMeta.totalDataPkts} PACKETS)`,
+              `PAGE ${recvMeta.w}X${recvMeta.h} PIXELS FEEDING IN REAL TIME...`
+            );
+          }
+        }
+      }
+
+      async function sendHandshakeReply() {
+        const ctx = ensureAudioCtx();
+        const sr = ctx.sampleRate;
+        setRecvStatus('ANSWERING CALL (2,100 HZ CED + V.21)', 'SENDING HANDSHAKE CONFIRMATION...');
+        const ced = synthSine(2100, 1.35, 0.24, sr);
+        const v21 = synthV21Burst(0.55, 0.22, sr);
+        const combined = new Float32Array(ced.length + v21.length);
+        combined.set(ced, 0);
+        combined.set(v21, ced.length);
+        playToneBuffer(combined, 0.02);
+        await waitMs((combined.length / sr) * 1000 + 80);
+        recvState = 'RECEIVING';
+        frameBuffer = [];
+        setRecvStatus('CONNECTED — LISTENING FOR FAX PAGE', 'READY TO PRINT INCOMING SCAN...');
+      }
+
+      async function startListening() {
+        if (isListening) return;
+        const ok = await startMic();
+        if (!ok) {
+          setRecvStatus('MICROPHONE BLOCKED', 'ALLOW MICROPHONE PERMISSION IN BROWSER TO RECEIVE FAX.');
+          return;
+        }
+
+        isListening = true;
+        recvState = 'WAITING_CNG';
+        recvMeta = null;
+        recvPackets = null;
+        recvPacketCount = 0;
+        frameBuffer = [];
+        cngHits = 0;
+        lastSymbolTime = 0;
+
+        listenBtn.disabled = true;
+        stopListenBtn.disabled = false;
+        savePngBtn.disabled = true;
+        printBtn.disabled = true;
+
+        setRecvStatus('LISTENING FOR FAX CALL', 'WAITING FOR 1,100 HZ CNG TONE...');
+
+        const ctx = ensureAudioCtx();
+        const sr = ctx.sampleRate;
+        const timeDomain = new Float32Array(analyser.fftSize);
+        const symSamples = new Float32Array(Math.floor(TONE_ON_SEC * sr));
+
+        listenTimer = setInterval(async () => {
+          if (!isListening || !analyser) return;
+          analyser.getFloatTimeDomainData(timeDomain);
+
+          if (recvState === 'WAITING_CNG') {
+            const cngMag = goertzelMag(timeDomain, 1100, sr);
+            const pilotMag = goertzelMag(timeDomain, PILOT_FREQ, sr);
+            if (cngMag > 0.015) {
+              cngHits++;
+              if (cngHits >= 2) {
+                recvState = 'HANDSHAKING';
+                cngHits = 0;
+                await sendHandshakeReply();
+              }
+            } else if (pilotMag > 0.012) {
+              // Direct data/pilot heard even without CNG
+              recvState = 'RECEIVING';
+              setRecvStatus('RECEIVING FAX SIGNAL', 'DECODING INCOMING PAGE...');
+            }
+            return;
+          }
+
+          if (recvState === 'RECEIVING') {
+            const now = performance.now();
+            if (now - lastSymbolTime < SYMBOL_SEC * 1000 * 0.85) return;
+
+            // Grab recent samples matching TONE_ON_SEC
+            const take = Math.min(symSamples.length, timeDomain.length);
+            symSamples.set(timeDomain.subarray(timeDomain.length - take));
+            const decoded = decode12BitSymbol(symSamples, sr);
+
+            if (decoded.valid) {
+              lastSymbolTime = now;
+              if (decoded.bits === 0xfff) {
+                // Frame sync symbol
+                frameBuffer = [];
+              } else if (decoded.bits === 0xaaa) {
+                // End symbol
+                if (frameBuffer.length > 0) {
+                  const rawBytes = symbolsToBytes(frameBuffer, frameBuffer.length * 2);
+                  for (let off = 0; off + 12 <= rawBytes.length; off += 12) {
+                    processIncomingPacketBytes(rawBytes.subarray(off, off + 12));
+                  }
+                  frameBuffer = [];
+                }
+              } else {
+                frameBuffer.push(decoded.bits);
+                // Decode as soon as we have 8 symbols (12 bytes = 1 packet)
+                if (frameBuffer.length >= 8) {
+                  const eightSyms = frameBuffer.splice(0, 8);
+                  const pktBytes = symbolsToBytes(eightSyms, 12);ƒ                  processIncomingPacketBytes(pktBytes);
+                }
+              }
+            }
+          }
+        }, 25);
+      }
+
+      function stopListening() {
+        isListening = false;
+        recvState = 'IDLE';
+        stopMic();
+        listenBtn.disabled = false;
+        stopListenBtn.disabled = true;
+        if (recvMeta) {
+          setRecvStatus(
+            `FAX SESSION ENDED (${recvPacketCount}/${recvMeta.totalDataPkts} PACKETS)`,
+            'YOU CAN DOWNLOAD THE PNG OR PRINT THE PAGE.'
+          );
+        } else {
+          setRecvStatus('IDLE', 'TAP LISTEN TO RECEIVE ANOTHER FAX.');
+        }
+      }
+
+      listenBtn.addEventListener('click', startListening);
+      stopListenBtn.addEventListener('click', stopListening);
+
+      savePngBtn.addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.download = 'voice-fax.png';
+        link.href = recvCanvas.toDataURL('image/png');
+        link.click();
+      });
+
+      printBtn.addEventListener('click', () => {
+        window.print();
+      });
+    })();
+  </script>
+</body>
+</html>
