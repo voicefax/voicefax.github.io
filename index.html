@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>VoiceFax — Acoustic Prototype</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#131f33;--line:#263650;--text:#edf4ff;--muted:#9fb0c8;--blue:#4e9cff;--green:#48d6a0;--red:#ff7777}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(140deg,#0b1220,#101d32);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:850px;margin:0 auto;padding:28px 18px 60px}h1{margin:0;font-size:34px;letter-spacing:-1px}h1 span{color:#73b5ff}.sub{color:var(--muted);margin:4px 0 22px}
+.notice{padding:13px 15px;border:1px solid #725a2b;background:#302718;border-radius:12px;color:#ffe2a2;margin:16px 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.card{background:rgba(19,31,51,.96);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0}
+h2{font-size:19px;margin:0 0 12px}p{margin:8px 0;color:var(--muted)}label{display:block;font-weight:600;margin:12px 0 6px}
+input[type=file]{width:100%;padding:12px;border:1px dashed #49617f;border-radius:10px;background:#0d1728;color:var(--text)}
+button{border:0;border-radius:10px;padding:12px 15px;background:var(--blue);color:#071426;font-weight:750;font-size:15px;cursor:pointer;margin:8px 6px 0 0}
+button.secondary{background:#2b3c56;color:var(--text)}button.stop{background:#ffb5a8;color:#35120d}button:disabled{background:#39475b;color:#8997aa;cursor:not-allowed}
+.status{padding:12px;border-radius:10px;background:#0b1728;border:1px solid var(--line);margin-top:12px;min-height:48px;overflow-wrap:anywhere}
+.good{color:var(--green)}.bad{color:var(--red)}.muted{color:var(--muted)}.meter{height:8px;background:#263650;border-radius:20px;overflow:hidden;margin-top:10px}.meter>div{height:100%;width:0;background:var(--green);transition:width .15s}
+.small{font-size:13px}.stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin-top:10px}
+a{color:#8fc3ff}footer{color:var(--muted);font-size:13px;margin-top:20px}
+</style>
+</head>
+<body><main>
+<h1>Voice<span>Fax</span></h1><div class="sub">Acoustic file-transfer prototype · speaker to microphone</div>
+<div class="notice"><b>Experimental:</b> this prototype sends actual file bytes as sound. It has not yet been validated across every phone, speaker, or browser. Keep both devices nearby, use a quiet room, and keep this page open.</div>
+<div class="grid">
+<section class="card">
+<h2>1. Send a file</h2>
+<p>Choose a small file, prepare it, then play the sound toward the receiving device.</p>
+<label for="sendFile">Photo or PDF</label><input id="sendFile" type="file" accept="image/*,application/pdf">
+<div id="fileInfo" class="status">No file selected.</div>
+<button id="prepare" disabled>Prepare file</button>
+<button id="send" disabled>Send by sound</button>
+<div id="sendStatus" class="status" aria-live="polite">Waiting for a file.</div>
+<div class="meter"><div id="sendMeter"></div></div>
+<div class="stats"><span id="sizeStat">Size: —</span><span id="timeStat">Estimated audio: —</span></div>
+</section>
+<section class="card">
+<h2>2. Receive a file</h2>
+<p>On the other device, start listening before pressing Send on the first device. Stop listening after the sound finishes.</p>
+<button id="listen">Start listening</button><button id="stop" class="stop" disabled>Stop & decode</button>
+<div id="receiveStatus" class="status" aria-live="polite">Microphone not started.</div>
+<div class="meter"><div id="receiveMeter"></div></div>
+<a id="download" hidden>Download received file</a>
+</section>
+</div>
+<section class="card" style="margin-top:16px">
+<h2>How to test</h2>
+<ol class="small">
+<li>Open this page on two devices using HTTPS (GitHub Pages is fine).</li>
+<li>On the receiving device, tap <b>Start listening</b> and allow microphone access.</li>
+<li>On the sending device, choose a small PDF or image, tap <b>Prepare file</b>, then <b>Send by sound</b>.</li>
+<li>Keep the devices close, with the sender speaker aimed toward the receiver microphone.</li>
+<li>When playback finishes, tap <b>Stop & decode</b> on the receiving device.</li>
+</ol>
+<p class="small">The first build uses a simple audible multitone packet modem and a recording-based decoder. Browser audio processing, automatic gain control, echo cancellation, and room noise can affect results. It is a prototype, not a guaranteed high-speed fax standard.</p>
+</section>
+<footer>VoiceFax Acoustic Prototype · No network transfer is used for file contents. HTTPS is required for microphone access.</footer>
+</main><script src="script.js"></script></body></html>
