@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f3ec">
+  <meta name="description" content="VOICEFAX turns your documents into a fax transmission. Upload a file, enter a number, and send.">
+  <title>VOICEFAX — Fax, without the fax machine</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+    :root{--paper:#f4f3ec;--white:#fffefa;--ink:#17231e;--muted:#778079;--line:#dfe2d8;--green:#245c47;--green-dark:#194635;--lime:#d8f278;--orange:#eb7957;--mono:'DM Mono',monospace;--sans:'DM Sans',sans-serif;--display:'Space Grotesk',sans-serif}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);min-height:100vh}button,input{font:inherit}button{cursor:pointer}.shell{max-width:1280px;margin:0 auto;padding:0 56px}
+    .topbar{height:82px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.8px}.brand-mark{width:30px;height:30px;background:var(--green);border-radius:8px;display:grid;place-items:center;color:var(--lime)}.brand-mark svg{width:18px}.top-right{display:flex;align-items:center;gap:24px;color:var(--muted);font:11px var(--mono);letter-spacing:.04em}.live-dot{height:7px;width:7px;border-radius:50%;background:#79b75e;display:inline-block;margin-right:8px;box-shadow:0 0 0 3px #79b75e20}.top-link{color:inherit;text-decoration:none}.top-link:hover{color:var(--green)}
+    main{padding:68px 0 92px}.eyebrow{display:flex;align-items:center;gap:10px;color:var(--green);font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase}.eyebrow:before{content:'';width:22px;height:1px;background:var(--green)}h1{font:500 clamp(43px,6vw,74px)/.99 var(--display);letter-spacing:-.065em;margin:19px 0 17px;max-width:730px}h1 span{color:var(--green)}.intro{max-width:520px;color:#69736c;line-height:1.7;font-size:15px;margin:0}.layout{margin-top:53px;display:grid;grid-template-columns:minmax(0,1fr) 324px;gap:52px;align-items:start}.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.section-title{font:600 14px var(--display);letter-spacing:-.02em}.step{font:10px var(--mono);color:#909990;letter-spacing:.08em}.dropzone{background:var(--white);border:1px dashed #bfc9be;border-radius:12px;min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:26px;transition:.18s ease;position:relative}.dropzone.dragover{background:#edf3e6;border-color:var(--green);transform:scale(1.005)}.upload-icon{height:54px;width:54px;border-radius:16px;background:#edf2e8;color:var(--green);display:grid;place-items:center;margin-bottom:16px}.upload-icon svg{width:24px}.drop-title{font:600 16px var(--display);letter-spacing:-.03em}.drop-copy{font-size:12px;color:var(--muted);margin:7px 0 16px}.browse{background:var(--green);color:white;border:0;border-radius:6px;padding:10px 15px;font-size:12px;font-weight:600;transition:background .15s}.browse:hover,.send:hover:not(:disabled){background:var(--green-dark)}.formats{margin-top:15px;font:10px var(--mono);color:#9aa19a;letter-spacing:.04em}.file-input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.file-card{display:none;align-items:center;gap:13px;width:min(100%,490px);background:#f7f8f2;border:1px solid var(--line);border-radius:9px;padding:12px;text-align:left}.file-card.visible{display:flex}.file-icon{width:40px;height:44px;background:white;border:1px solid var(--line);border-radius:6px;display:grid;place-items:center;color:var(--green);font:10px var(--mono);flex:none}.file-details{min-width:0;flex:1}.file-name{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.file-size{margin-top:5px;font:10px var(--mono);color:var(--muted)}.remove-file{border:0;background:none;color:#89918a;padding:6px;font-size:18px;line-height:1}.remove-file:hover{color:var(--orange)}.replace{margin-top:12px;border:0;background:none;color:var(--green);font-size:11px;text-decoration:underline;text-underline-offset:3px}
+    .number-block{margin-top:30px}.input-wrap{position:relative}.phone-input{width:100%;height:53px;border:1px solid #d5dad1;border-radius:8px;background:var(--white);padding:0 16px;outline:none;font:14px var(--mono);letter-spacing:.02em;transition:border-color .15s,box-shadow .15s}.phone-input::placeholder{color:#a7aea6}.phone-input:focus{border-color:var(--green);box-shadow:0 0 0 3px #245c4715}.field-hint{margin:9px 0 0;color:#8a928a;font-size:11px}.send{width:100%;height:53px;margin-top:22px;display:flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:7px;background:var(--green);color:white;font-weight:600;font-size:13px;transition:.15s}.send:disabled{background:#d7dbd3;color:#969e95;cursor:not-allowed}.send svg{width:16px}.status{display:none;border-radius:8px;margin-top:14px;padding:12px 14px;font-size:12px;line-height:1.55}.status.show{display:block}.status.error{background:#fff0eb;color:#934d39;border:1px solid #f2d5cb}.status.success{background:#eaf3e7;color:#315b3d;border:1px solid #d1e4ce}.status.info{background:#eef1e8;color:#53634f;border:1px solid #dfe5d6}.status strong{display:block;font-size:12px;margin-bottom:3px}
+    .side{background:var(--green);color:#f6f7ed;border-radius:12px;overflow:hidden;position:relative}.side-top{padding:25px 24px 23px}.side-label{color:#b6c8b7;font:10px var(--mono);letter-spacing:.13em;text-transform:uppercase}.side h2{font:500 24px/1.12 var(--display);letter-spacing:-.05em;margin:17px 0 10px}.side p{color:#c3d0c3;font-size:12px;line-height:1.65;margin:0}.fax-art{height:151px;background:#1a4937;position:relative;overflow:hidden}.wave{position:absolute;left:0;right:0;top:50%;height:1px;background:#a6d86e55}.wave svg{position:absolute;inset:-36px 0;width:100%;height:73px}.paper{position:absolute;width:109px;height:134px;top:17px;left:50%;transform:translateX(-50%) rotate(5deg);background:#f4f3ec;border-radius:3px;padding:20px 14px;box-shadow:0 9px 20px #102e2450}.paper-mark{font:700 8px var(--display);color:var(--green);letter-spacing:.04em}.paper-line{height:3px;background:#dce1d7;border-radius:2px;margin-top:9px}.paper-line.short{width:58%}.paper-stamp{position:absolute;right:13px;bottom:15px;border:1px solid #77aa64;color:#56844b;border-radius:2px;padding:3px 4px;font:6px var(--mono);transform:rotate(-8deg)}.side-bottom{padding:20px 24px 23px}.feature{display:flex;gap:12px;align-items:flex-start;margin:0 0 16px}.feature:last-child{margin-bottom:0}.check{width:17px;height:17px;border-radius:50%;background:#ffffff19;color:var(--lime);display:grid;place-items:center;flex:none;font-size:10px;margin-top:1px}.feature-copy{font-size:11px;color:#d0d9ce;line-height:1.5}.feature-copy b{display:block;color:white;font-size:11px;font-weight:600;margin-bottom:2px}.fineprint{font-size:10px;color:#929b91;line-height:1.6;margin-top:15px}.footer{border-top:1px solid var(--line);height:68px;display:flex;align-items:center;justify-content:space-between;color:#8c958d;font:10px var(--mono)}.footer a{color:inherit;text-decoration:none}.footer a:hover{color:var(--green)}.footer-right{display:flex;gap:19px}
+    @media(max-width:800px){.shell{padding:0 28px}.layout{grid-template-columns:minmax(0,1fr) 270px;gap:28px}.side-top,.side-bottom{padding-left:19px;padding-right:19px}.topbar{height:72px}main{padding-top:55px}}
+    @media(max-width:640px){.shell{padding:0 20px}.top-right{gap:14px}.top-right .top-link{display:none}main{padding:44px 0 56px}h1{font-size:50px}.layout{grid-template-columns:1fr;gap:28px;margin-top:35px}.side{display:grid;grid-template-columns:1fr 1fr}.side-top{padding:22px 18px}.side h2{font-size:21px}.side p{font-size:11px}.fax-art{height:auto;min-height:145px}.side-bottom{grid-column:1/-1;border-top:1px solid #ffffff20;padding:17px 18px}.feature{margin-bottom:11px}.fineprint{margin-top:11px}.dropzone{min-height:235px}.footer{height:auto;padding:20px 0;gap:15px;align-items:flex-start;flex-direction:column}.footer-right{gap:16px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <header class="shell topbar">
+    <a class="brand" href="#" aria-label="VOICEFAX home"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 8v8m4-12v16m4-9v2m4-8v12m4-9v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>VOICEFAX</a>
+    <div class="top-right"><span><i class="live-dot"></i>DOCUMENT DELIVERY, REIMAGINED</span><a class="top-link" href="mailto:hello@voicefax.github.io">GET IN TOUCH ↗</a></div>
+  </header>
+  <main class="shell">
+    <div class="eyebrow">A fax machine for the internet</div>
+    <h1>Fax, without<br>the <span>fax machine.</span></h1>
+    <p class="intro">Drop in a document, add a phone number, and send it on its way. The old-school fax, minus the paper jams.</p>
+
+    <div class="layout">
+      <form id="fax-form" novalidate>
+        <section>
+          <div class="section-head"><div class="section-title">Choose your document</div><div class="step">01 / UPLOAD</div></div>
+          <div class="dropzone" id="dropzone" role="group" aria-label="Upload a document">
+            <div class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="drop-title" id="drop-title">Drag your file here</div>
+            <div class="drop-copy" id="drop-copy">or choose a document from your device</div>
+            <button type="button" class="browse" id="browse">Browse files</button>
+            <div class="file-card" id="file-card" aria-live="polite">
+              <div class="file-icon" id="file-ext">PDF</div><div class="file-details"><div class="file-name" id="file-name"></div><div class="file-size" id="file-size"></div></div>
+              <button type="button" class="remove-file" id="remove-file" aria-label="Remove selected file">×</button>
+            </div>
+            <input class="file-input" id="file-input" type="file" accept=".pdf,.tif,.tiff,.png,.jpg,.jpeg,application/pdf,image/tiff,image/png,image/jpeg" aria-label="Choose a fax document">
+          </div>
+          <div class="formats">PDF, TIFF, PNG OR JPG <span style="padding:0 5px">·</span> UP TO 20 MB</div>
+        </section>
+        <section class="number-block">
+          <div class="section-head"><label for="phone" class="section-title">Where should we send it?</label><div class="step">02 / DESTINATION</div></div>
+          <div class="input-wrap"><input class="phone-input" type="tel" id="phone" name="phone" autocomplete="tel" placeholder="+1 (555) 000-0000" maxlength="24" aria-describedby="phone-hint"></div>
+          <p class="field-hint" id="phone-hint">Include the country code for international numbers.</p>
+        </section>
+        <button class="send" id="send" type="submit" disabled><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="send-label">Select a document to continue</span></button>
+        <div class="status" id="status" role="status" aria-live="polite"></div>
+      </form>
+
+      <aside class="side">
+        <div class="side-top"><div class="side-label">A little fax magic</div><h2>Your doc.<br>Their fax machine.</h2><p>We turn your file into fax-ready pages and deliver it over a phone call. No hardware, no paper, no fuss.</p></div>
+        <div class="fax-art" aria-hidden="true"><div class="wave"><svg viewBox="0 0 320 73" preserveAspectRatio="none" fill="none"><path d="M0 36.5h60l7-1 5-23 8 48 8-38 7 14h18l7-2 5-17 8 38 8-32 7 13h20l6-1 6-28 8 53 8-40 7 16h22l6-2 6-18 7 38 8-30 6 12h42" stroke="#d8f278" stroke-width="1.5"/></svg></div><div class="paper"><div class="paper-mark">VOICEFAX</div><div class="paper-line"></div><div class="paper-line"></div><div class="paper-line short"></div><div class="paper-line"></div><div class="paper-line short"></div><div class="paper-stamp">SENT WITH CARE</div></div></div>
+        <div class="side-bottom">
+          <div class="feature"><span class="check">✓</span><div class="feature-copy"><b>Ready for the real world</b>Familiar fax workflows, made simple.</div></div>
+          <div class="feature"><span class="check">✓</span><div class="feature-copy"><b>Your files stay yours</b>Secure delivery is built into the plan.</div></div>
+          <div class="feature"><span class="check">✓</span><div class="feature-copy"><b>Delivery, not guesswork</b>Know when your fax is on its way.</div></div>
+          <div class="fineprint">Fax delivery requires a configured VOICEFAX service. Please avoid sending sensitive documents until secure transmission is enabled.</div>
+        </div>
+      </aside>
+    </div>
+  </main>
+  <footer class="shell footer"><span>© 2026 VOICEFAX · MADE FOR THE LINE THAT STILL WORKS</span><div class="footer-right"><a href="mailto:hello@voicefax.github.io">SUPPORT</a><a href="#">PRIVACY</a></div></footer>
+  <script>
+    (() => {
+      const form = document.getElementById('fax-form');
+      const input = document.getElementById('file-input');
+      const dropzone = document.getElementById('dropzone');
+      const browse = document.getElementById('browse');
+      const fileCard = document.getElementById('file-card');
+      const send = document.getElementById('send');
+      const sendLabel = document.getElementById('send-label');
+      const status = document.getElementById('status');
+      const phone = document.getElementById('phone');
+      let selectedFile = null;
+      const allowed = new Set(['pdf','tif','tiff','png','jpg','jpeg']);
+      const maxBytes = 20 * 1024 * 1024;
+
+      function showStatus(type, title, message) {
+        status.className = `status show ${type}`;
+        status.replaceChildren();
+        const strong = document.createElement('strong');
+        strong.textContent = title;
+        status.append(strong, document.createTextNode(message));
+      }
+      function clearStatus() { status.className = 'status'; status.textContent = ''; }
+      function updateButton() {
+        const digits = phone.value.replace(/\D/g, '');
+        send.disabled = !selectedFile || digits.length < 7 || digits.length > 15;
+        sendLabel.textContent = !selectedFile ? 'Select a document to continue' : (digits.length < 7 || digits.length > 15 ? 'Enter a valid phone number' : 'Send fax');
+      }
+      function setFile(file) {
+        clearStatus();
+        if (!file) return;
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (!allowed.has(ext)) { showStatus('error', 'File type not supported.', 'Choose a PDF, TIFF, PNG, or JPG document.'); return; }
+        if (file.size > maxBytes) { showStatus('error', 'That file is too large.', 'Choose a document smaller than 20 MB.'); return; }
+        if (file.size === 0) { showStatus('error', 'This file is empty.', 'Choose a document with content and try again.'); return; }
+        selectedFile = file;
+        document.getElementById('file-name').textContent = file.name;
+        document.getElementById('file-size').textContent = `${(file.size / (1024 * 1024)).toFixed(file.size < 1024 * 1024 ? 2 : 1)} MB · READY TO SEND`;
+        document.getElementById('file-ext').textContent = ext === 'jpeg' ? 'JPG' : ext.toUpperCase();
+        fileCard.classList.add('visible');
+        document.getElementById('drop-title').textContent = 'Document ready';
+        document.getElementById('drop-copy').textContent = 'Your file is selected and ready for delivery.';
+        browse.textContent = 'Choose another';
+        updateButton();
+      }
+      browse.addEventListener('click', () => input.click());
+      input.addEventListener('change', () => { setFile(input.files[0]); input.value = ''; });
+      document.getElementById('remove-file').addEventListener('click', () => {
+        selectedFile = null; fileCard.classList.remove('visible');
+        document.getElementById('drop-title').textContent = 'Drag your file here';
+        document.getElementById('drop-copy').textContent = 'or choose a document from your device';
+        browse.textContent = 'Browse files'; clearStatus(); updateButton();
+      });
+      ['dragenter','dragover'].forEach(event => dropzone.addEventListener(event, e => { e.preventDefault(); dropzone.classList.add('dragover'); }));
+      ['dragleave','drop'].forEach(event => dropzone.addEventListener(event, e => { e.preventDefault(); dropzone.classList.remove('dragover'); }));
+      dropzone.addEventListener('drop', e => setFile(e.dataTransfer.files[0]));
+      phone.addEventListener('input', () => { clearStatus(); updateButton(); });
+
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        if (!selectedFile) return;
+        const digits = phone.value.replace(/\D/g, '');
+        if (digits.length < 7 || digits.length > 15) {
+          showStatus('error', 'Check that phone number.', 'Enter a number with 7–15 digits, including the country code.');
+          phone.focus(); return;
+        }
+        const body = new FormData();
+        body.append('file', selectedFile);
+        body.append('phone', phone.value.trim());
+        send.disabled = true;
+        sendLabel.textContent = 'Sending…';
+        showStatus('info', 'Connecting to VOICEFAX…', 'Your document is being securely prepared.');
+        try {
+          const response = await fetch('/api/faxes', { method: 'POST', body });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(result.message || (response.status === 404 ? 'Fax delivery is not configured on this site yet.' : 'The fax could not be sent. Please try again.'));
+          showStatus('success', 'Fax request received.', result.message || 'Your fax has been queued for delivery.');
+        } catch (error) {
+          const message = error instanceof TypeError
+            ? 'The fax service is not connected yet. Add a secure /api/faxes endpoint to enable real phone-call delivery.'
+            : error.message;
+          showStatus('error', 'We couldn’t send your fax.', message);
+        } finally { updateButton(); }
+      });
+    })();
+  </script>
+</body>
+</html>
